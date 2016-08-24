@@ -17,6 +17,7 @@ class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
         let image = UIImageView()
         image.image = UIImage(named: "Mark")
         image.contentMode = .ScaleAspectFit
+        image.userInteractionEnabled = true
         //image.backgroundColor = UIColor.redColor()
         return image
     }()
@@ -46,16 +47,16 @@ class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
         
         view.addConstraintsWithFormat("V:|-80-[v0(200)]-8-[v1]", views: profileImageView, nameLabel)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(profileImagePressed))
-        tap.delegate = self
-        profileImageView.addGestureRecognizer(tap)
+        let tapp = UITapGestureRecognizer(target: self, action: #selector(profileImagePressed))
+        tapp.delegate = self
+        profileImageView.addGestureRecognizer(tapp)
         
         if let name = userDefault.objectForKey("NAME"){
             nameLabel.text = name as? String
         }
         
         if let profileImg = userDefault.objectForKey("PROFILEIMAGE"){
-            profileImageView.image = profileImg as? UIImage
+            profileImageView.image = UIImage(data: profileImg as! NSData)
         }
         
     }
@@ -86,7 +87,7 @@ class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     
     func profileImagePressed(){
         let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .PhotoLibrary
+        //imagePicker.sourceType = .PhotoLibrary
         imagePicker.delegate = self
         presentViewController(imagePicker, animated: true, completion: nil)
     }
@@ -95,8 +96,10 @@ class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]){
         profileImage = info[UIImagePickerControllerOriginalImage] as? UIImage
         profileImageView.image = profileImage
-        userDefault.setObject(profileImage, forKey: "PROFILEIMAGE")
-        dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true) {
+            let profileImageData = UIImagePNGRepresentation(self.profileImage!)
+            self.userDefault.setObject(profileImageData, forKey: "PROFILEIMAGE")
+        }
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController){

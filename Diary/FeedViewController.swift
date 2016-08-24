@@ -135,20 +135,27 @@ class FeedCell: UICollectionViewCell{
     var post: Story? {
         didSet{
             
+            let userDefault = NSUserDefaults.standardUserDefaults()
             
-            let attributedText = NSMutableAttributedString(string: "Mark zuckerbeg", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(14)])
-            
-            if let date = post?.date{
-                let dateFormatter = NSDateFormatter()
-                dateFormatter.dateFormat = "MMMM dd, yyyy h:mm a"
+            if let name = userDefault.objectForKey("NAME") as? String{
+                let attributedText = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(14)])
                 
-                attributedText.appendAttributedString(NSAttributedString(string: "\n\(dateFormatter.stringFromDate(date))", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
-                
-                if let location = post?.address{
-                    attributedText.appendAttributedString(NSAttributedString(string: "\n\(location)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
+                if let date = post?.date{
+                    let dateFormatter = NSDateFormatter()
+                    dateFormatter.dateFormat = "MMMM dd, yyyy h:mm a"
+                    
+                    attributedText.appendAttributedString(NSAttributedString(string: "\n\(dateFormatter.stringFromDate(date))", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
+                    
+                    if let location = post?.address{
+                        attributedText.appendAttributedString(NSAttributedString(string: "\n\(location)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
+                    }
+                    
+                    nameLabel.attributedText = attributedText
                 }
-                
-                nameLabel.attributedText = attributedText
+            }
+            
+            if let profileImageData =  userDefault.objectForKey("PROFILEIMAGE") as? NSData {
+                profileImageview.image = UIImage(data: profileImageData)
             }
 
             
@@ -205,7 +212,8 @@ class FeedCell: UICollectionViewCell{
     let profileImageview: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "Mark")
-        image.contentMode = .ScaleAspectFit
+        image.contentMode = .ScaleAspectFill
+        image.layer.masksToBounds = true
         image.backgroundColor = UIColor.redColor()
         return image
     }()
