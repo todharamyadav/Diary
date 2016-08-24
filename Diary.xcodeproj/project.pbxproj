@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		672350EA1D6B5C9F009146D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350E91D6B5C9F009146D0 /* AppDelegate.swift */; };
-		672350EC1D6B5C9F009146D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350EB1D6B5C9F009146D0 /* ViewController.swift */; };
+		672350EC1D6B5C9F009146D0 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350EB1D6B5C9F009146D0 /* FeedViewController.swift */; };
 		672350F21D6B5C9F009146D0 /* Diary.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 672350F01D6B5C9F009146D0 /* Diary.xcdatamodeld */; };
 		672350F41D6B5C9F009146D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 672350F31D6B5C9F009146D0 /* Assets.xcassets */; };
 		672350F71D6B5C9F009146D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 672350F51D6B5C9F009146D0 /* LaunchScreen.storyboard */; };
@@ -16,12 +16,14 @@
 		6770E5961D6BF25E00261D1F /* AddPostViewControllerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */; };
 		6770E5A11D6BFF5200261D1F /* Story+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */; };
 		6770E5A21D6BFF5200261D1F /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E5A01D6BFF5200261D1F /* Story.swift */; };
+		6790C3FE1D6D0BC100418C03 /* customTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */; };
+		6790C4001D6D0F6800418C03 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		672350E61D6B5C9F009146D0 /* Diary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Diary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		672350E91D6B5C9F009146D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		672350EB1D6B5C9F009146D0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		672350EB1D6B5C9F009146D0 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		672350F11D6B5C9F009146D0 /* Diary.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Diary.xcdatamodel; sourceTree = "<group>"; };
 		672350F31D6B5C9F009146D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		672350F61D6B5C9F009146D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -30,6 +32,8 @@
 		6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewControllerHandler.swift; sourceTree = "<group>"; };
 		6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Story+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		6770E5A01D6BFF5200261D1F /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
+		6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = customTabBarController.swift; sourceTree = "<group>"; };
+		6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				672350E91D6B5C9F009146D0 /* AppDelegate.swift */,
-				672350EB1D6B5C9F009146D0 /* ViewController.swift */,
+				672350EB1D6B5C9F009146D0 /* FeedViewController.swift */,
 				672350F31D6B5C9F009146D0 /* Assets.xcassets */,
 				672350F51D6B5C9F009146D0 /* LaunchScreen.storyboard */,
 				672350F81D6B5C9F009146D0 /* Info.plist */,
@@ -72,6 +76,8 @@
 				6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */,
 				6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */,
 				6770E5A01D6BFF5200261D1F /* Story.swift */,
+				6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */,
+				6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */,
 			);
 			path = Diary;
 			sourceTree = "<group>";
@@ -149,8 +155,10 @@
 			files = (
 				672350FF1D6BACDE009146D0 /* AddPostViewController.swift in Sources */,
 				672350F21D6B5C9F009146D0 /* Diary.xcdatamodeld in Sources */,
-				672350EC1D6B5C9F009146D0 /* ViewController.swift in Sources */,
+				6790C3FE1D6D0BC100418C03 /* customTabBarController.swift in Sources */,
+				672350EC1D6B5C9F009146D0 /* FeedViewController.swift in Sources */,
 				6770E5A11D6BFF5200261D1F /* Story+CoreDataProperties.swift in Sources */,
+				6790C4001D6D0F6800418C03 /* SettingViewController.swift in Sources */,
 				6770E5961D6BF25E00261D1F /* AddPostViewControllerHandler.swift in Sources */,
 				672350EA1D6B5C9F009146D0 /* AppDelegate.swift in Sources */,
 				6770E5A21D6BFF5200261D1F /* Story.swift in Sources */,

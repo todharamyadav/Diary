@@ -57,6 +57,8 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.whiteColor()
+        tabBarController?.tabBar.hidden = true
+        
         let bottomBorderView = UIView()
         bottomBorderView.backgroundColor = UIColor(white: 0.95, alpha: 1)
         
@@ -101,6 +103,7 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     
     func imageContainerPressed(){
         let uiImagePicker = UIImagePickerController()
+        uiImagePicker.sourceType = .PhotoLibrary
         uiImagePicker.delegate = self
         presentViewController(uiImagePicker, animated: true, completion: nil)
     }
