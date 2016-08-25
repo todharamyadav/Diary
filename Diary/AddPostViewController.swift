@@ -12,6 +12,7 @@ import CoreLocation
 
 class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate {
     
+    var album: Album?
     var clLocationManager = CLLocationManager()
     var address: String?
     
@@ -57,7 +58,6 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.whiteColor()
-        tabBarController?.tabBar.hidden = true
         
         let bottomBorderView = UIView()
         bottomBorderView.backgroundColor = UIColor(white: 0.95, alpha: 1)

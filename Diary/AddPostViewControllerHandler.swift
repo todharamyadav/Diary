@@ -31,6 +31,7 @@ extension AddPostViewController {
             }
             
             newStory.date = NSDate()
+            newStory.album = self.album
             
             do{
                 try context.save()

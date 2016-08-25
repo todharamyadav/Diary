@@ -14,8 +14,8 @@ class customTabBarController: UITabBarController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let feedController = FeedViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        let navigationController = UINavigationController(rootViewController: feedController)
+        let albumController = AlbumCollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        let navigationController = UINavigationController(rootViewController: albumController)
         navigationController.title = "Home"
         navigationController.tabBarItem.image = UIImage(named: "Home")
         

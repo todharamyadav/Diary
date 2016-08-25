@@ -14,6 +14,12 @@ let cellID = "cellID"
 class FeedViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, NSFetchedResultsControllerDelegate {
     
     
+    var album: Album?{
+        didSet{
+            navigationItem.title = album?.name
+        }
+    }
+    
     func clearData(){
         let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
         
@@ -45,6 +51,7 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         let fetchRequest = NSFetchRequest(entityName: "Story")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        fetchRequest.predicate = NSPredicate(format: "album.name = %@", self.album!.name!)
     
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         frc.delegate = self
@@ -56,16 +63,12 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
             self.collectionView?.insertItemsAtIndexPaths([newIndexPath!])
         }
     }
-    
-    override func viewWillAppear(animated: Bool) {
-        tabBarController?.tabBar.hidden = false
-    }
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //clearData()
-        
+        tabBarController?.tabBar.hidden = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(addPost))
         
         navigationItem.title = "Events"
@@ -79,6 +82,13 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         } catch let err {
             print(err)
         }
+    }
+    
+    func addPost(){
+        
+        let controller = AddPostViewController()
+        controller.album = self.album
+        navigationController?.pushViewController(controller, animated: true)
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -119,11 +129,7 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         return CGSizeMake(view.frame.width, 300)
     }
     
-    func addPost(){
-        
-        let controller = AddPostViewController()
-        navigationController?.pushViewController(controller, animated: true)
-    }
+    
 
 }
 
@@ -165,24 +171,17 @@ class FeedCell: UICollectionViewCell{
             
             
             if let statusImage = post?.locationImage{
-                
-                var imageData: NSData?
-                
-                imageData = statusImage
+        
                 
                 if let image = imageCache.objectForKey(statusImage) as? UIImage {
                     statusImageView.image = image
                     return
                 }else{
                     
-                    
                     dispatch_async(dispatch_get_main_queue(), {
                         let image = UIImage(data: statusImage)
                         
-                        if imageData == statusImage{
-                            self.statusImageView.image = image
-                            
-                        }
+                        self.statusImageView.image = image
                         self.imageCache.setObject(image!, forKey: statusImage)
                         
                     })

@@ -1,5 +1,5 @@
 //
-//  Story+CoreDataProperties.swift
+//  Album+CoreDataProperties.swift
 //  Diary
 //
 //  Created by Dharamvir on 8/24/16.
@@ -12,12 +12,10 @@
 import Foundation
 import CoreData
 
-extension Story {
+extension Album {
 
-    @NSManaged var address: String?
-    @NSManaged var date: NSDate?
-    @NSManaged var locationImage: NSData?
-    @NSManaged var status: String?
-    @NSManaged var album: Album?
+    @NSManaged var albumDate: NSDate?
+    @NSManaged var name: String?
+    @NSManaged var stories: NSSet?
 
 }
