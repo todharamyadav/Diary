@@ -7,54 +7,12 @@
 //
 
 import UIKit
-import CoreData
+//import CoreData
 import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class AlbumCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, NSFetchedResultsControllerDelegate {
-    
-    func clearData(){
-        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
-        
-        if let context = delegate?.managedObjectContext{
-            
-            do{
-                let entityNames = ["Album"]
-                
-                for entityName in entityNames{
-                    let fetchRequest = NSFetchRequest(entityName: entityName)
-                    let objects = try (context.executeFetchRequest(fetchRequest)) as? [NSManagedObject]
-                    
-                    for object in objects!{
-                        context.deleteObject(object)
-                    }
-                }
-                
-                try context.save()
-                
-            }catch let err{
-                print(err)
-            }
-            
-        }
-    }
-    
-    lazy var fetchRequestController: NSFetchedResultsController = {
-        let fetchRequest = NSFetchRequest(entityName: "Album")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "albumDate", ascending: false)]
-        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        
-        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        frc.delegate = self
-        return frc
-    }()
-    
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        if type == .Insert{
-            self.collectionView?.insertItemsAtIndexPaths([newIndexPath!])
-        }
-    }
+class AlbumCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     override func viewWillAppear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
@@ -62,28 +20,105 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //clearData()
-        
-//        let ref = FIRDatabase.database().referenceFromURL("https://diary-565a0.firebaseio.com/")
-//        ref.updateChildValues(["someValue": 123123])
         
         collectionView?.alwaysBounceVertical = true
         self.collectionView!.registerClass(AlbumCustomCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.backgroundColor = UIColor.whiteColor()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(addAlbum))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .Plain, target: self, action: #selector(logOut))
-        navigationItem.title = "Album"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .Plain, target: self, action: #selector(handleLogOut))
         
-        do{
-            try fetchRequestController.performFetch()
-        } catch let err{
-            print(err)
+        checkIfUserIsLoggedIn()
+        observeAlbums()
+        
+    }
+    var albums = [Album]()
+    
+    func observeAlbums() {
+        let ref = FIRDatabase.database().reference().child("Albums")
+        ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
+            if let dictionary = snapshot.value as? [String: AnyObject]{
+                let album = Album()
+                album.setValuesForKeysWithDictionary(dictionary)
+                self.albums.append(album)
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.collectionView?.reloadData()
+                })
+            }
+            
+            }, withCancelBlock: nil)
+    }
+    
+    func checkIfUserIsLoggedIn(){
+        if FIRAuth.auth()?.currentUser?.uid == nil {
+            performSelector(#selector(handleLogOut), withObject: nil, afterDelay: 0)
+        } else{
+            setUpNavigationItemTitle()
+            
         }
+    }
+    
+    func setUpNavigationItemTitle() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+            return
+        }
+        FIRDatabase.database().reference().child("users").child(uid).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                let user = User()
+                user.setValuesForKeysWithDictionary(dictionary)
+                self.setUpNavBarWithUser(user)
+            }
+            
+            
+            }, withCancelBlock: nil)
+    }
+    
+    func setUpNavBarWithUser(user: User) {
+        
+        let titleView = UIView()
+        titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        //titleView.backgroundColor = UIColor.redColor()
+        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let profileImageView = UIImageView()
+        profileImageView.contentMode = .ScaleAspectFill
+        profileImageView.layer.cornerRadius = 20
+        profileImageView.clipsToBounds = true
+        if let profileImageUrl = user.profileImageUrl{
+            profileImageView.loadImagWithCacheAndUrlString(profileImageUrl)
+        }
+        
+        let nameLabel = UILabel()
+        nameLabel.text = user.name
+        
+        titleView.addSubview(containerView)
+        containerView.addSubview(profileImageView)
+        containerView.addSubview(nameLabel)
+        
+        titleView.addConstraintsWithFormat("H:|[v0]", views: containerView)
+        titleView.addConstraintsWithFormat("V:|[v0]|", views: containerView)
+        
+        containerView.addConstraintsWithFormat("H:|[v0(40)]-5-[v1]|", views: profileImageView, nameLabel)
+        containerView.addConstraintsWithFormat("V:|[v0]|", views: profileImageView)
+        
+        containerView.addConstraintsWithFormat("V:|[v0]|", views: nameLabel)
+        self.navigationItem.titleView = titleView
         
     }
     
-    func logOut(){
+    func handleLogOut(){
+        do{
+            try FIRAuth.auth()?.signOut()
+        }catch let logoutErr{
+            print(logoutErr)
+        }
+        
         let loginController = LoginViewController()
+        loginController.albumController = self
         presentViewController(loginController, animated: true, completion: nil)
     }
     
@@ -91,30 +126,16 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         let alert = UIAlertController(title: "Album", message: "Enter New Album Name", preferredStyle: .Alert)
         
         let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
-            let textField = alert.textFields![0] as UITextField
+            let albumNameTextField = alert.textFields![0] as UITextField
+            let timestamp: NSNumber = Int(NSDate().timeIntervalSince1970)
+            let userAlbum = FIRAuth.auth()!.currentUser!.uid
             
-            //self.nameLabel.text = textField.text
-            let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
-            if let context = delegate?.managedObjectContext{
-                
-                
-                if textField.text == "" {
-                    print("Please enter album name")
-                }else{
-                    let newAlbum = NSEntityDescription.insertNewObjectForEntityForName("Album", inManagedObjectContext: context) as! Album
-                    
-                    newAlbum.name = textField.text
-                    newAlbum.albumDate = NSDate()
-                    
-                    do{
-                        try context.save()
-                    } catch let err{
-                        print(err)
-                    }
-
-                }
-            }
-
+            let ref = FIRDatabase.database().reference().child("Albums")
+            let childRef = ref.childByAutoId()
+            let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum]
+            
+            childRef.updateChildValues(values)
+            
         }
         
         let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
@@ -126,38 +147,26 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         presentViewController(alert, animated: true, completion: nil)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        if let count = fetchRequestController.sections?[0].numberOfObjects {
-            return count
-        }
-        return 0
+        return albums.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! AlbumCustomCell
-    
-        // Configure the cell
-        let currAlbum = fetchRequestController.objectAtIndexPath(indexPath) as! Album
         
-        cell.album = currAlbum
+        let album = albums[indexPath.item]
+        cell.albumLabel.text = album.albumName
     
         return cell
     }
     
-    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        let layout = UICollectionViewFlowLayout()
-        let controller = FeedViewController(collectionViewLayout: layout)
-        let album = fetchRequestController.objectAtIndexPath(indexPath) as! Album
-        controller.album = album
-        navigationController?.pushViewController(controller, animated: true)
-    }
+//    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        let layout = UICollectionViewFlowLayout()
+//        let controller = FeedViewController(collectionViewLayout: layout)
+//
+//        navigationController?.pushViewController(controller, animated: true)
+//    }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
@@ -169,55 +178,6 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
     }
 }
 
-class AlbumCustomCell: UICollectionViewCell {
-    
-    var album: Album? {
-        didSet{
-            albumLabel.text = album?.name
-            
-        }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    
-        
-        setUpViews()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    let albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .ScaleAspectFit
-        imageView.layer.borderColor = UIColor.greenColor().CGColor
-        imageView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 224/255, alpha: 1)
-        imageView.image = UIImage(named: "Default_Image")
-        return imageView
-    }()
-    
-    let albumLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Trip to Paris"
-        label.font = UIFont.systemFontOfSize(18)
-        label.textColor = UIColor.whiteColor()
-        label.backgroundColor = UIColor(red: 210/255, green: 105/255, blue: 30/255, alpha: 1)
-        label.textAlignment = .Center
-        return label
-    }()
-    
-    func setUpViews(){
-        addSubview(albumImageView)
-        addSubview(albumLabel)
-        
-        addConstraintsWithFormat("H:|[v0]|", views: albumImageView)
-        addConstraintsWithFormat("H:|[v0]|", views: albumLabel)
-        
-        addConstraintsWithFormat("V:|[v0(165)][v1]|", views: albumImageView, albumLabel)
-    }
-}
 
 
 

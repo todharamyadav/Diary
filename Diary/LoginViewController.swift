@@ -11,12 +11,30 @@ import Firebase
 
 class LoginViewController: UIViewController {
     
-    let profileImageView: UIImageView = {
+    var heightConstriantName: NSLayoutConstraint?
+    var heighConstraintLoginController: NSLayoutConstraint?
+    var albumController: AlbumCollectionViewController?
+    
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .ScaleAspectFill
         imageView.image = UIImage(named: "Profile")
+        
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadProfilePhoto)))
+        imageView.userInteractionEnabled = true
+        
         return imageView
     }()
+    
+    lazy var loginSegmentControl: UISegmentedControl = {
+        let sc = UISegmentedControl(items: ["Login","Register"])
+        sc.tintColor = UIColor.whiteColor()
+        sc.selectedSegmentIndex = 1
+        sc.addTarget(self, action: #selector(handleLoginSegmentControl), forControlEvents: .ValueChanged)
+        return sc
+    }()
+    
+    
     
     let loginContainerView: UIView = {
         let view = UIView()
@@ -59,35 +77,22 @@ class LoginViewController: UIViewController {
         return tf
     }()
     
-    lazy var registerButton: UIButton = {
+    lazy var loginRegisterButton: UIButton = {
         let button = UIButton()
         button.setTitle("Register", forState: .Normal)
         button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         button.backgroundColor = UIColor.blueColor()
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleRegister), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(handleLoginRegister), forControlEvents: .TouchUpInside)
         return button
     }()
     
-    func handleRegister(){
-        guard let email = emailTextField.text, password = passwordTextField.text else{
-            print("Form is not valid")
-            return
-        }
-        
-        FIRAuth.auth()?.createUserWithEmail(email, password: password, completion: { (user: FIRUser?, error) in
-            if error != nil{
-                print(error)
-                return
-            }
-            
-        })
-    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.greenColor()
+        view.backgroundColor = UIColor(red: 97/255, green: 183/255, blue: 127/255, alpha: 1)
 
         setUpLoginView()
     }
@@ -104,17 +109,22 @@ class LoginViewController: UIViewController {
     
     func setUpLoginView(){
         view.addSubview(loginContainerView)
-        view.addSubview(registerButton)
+        view.addSubview(loginRegisterButton)
         view.addSubview(profileImageView)
+        view.addSubview(loginSegmentControl)
         
         
         view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginContainerView)
-         view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: registerButton)
+        view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginRegisterButton)
         view.addConstraintsWithFormat("H:|-100-[v0(200)]", views: profileImageView)
+        view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginSegmentControl)
         
-        view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: registerButton)
+        view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginRegisterButton)
         
-        view.addConstraintsWithFormat("V:|-150-[v0(200)]-2-[v1]-2-[v2(40)]-200-|", views: profileImageView, loginContainerView, registerButton)
+        view.addConstraintsWithFormat("V:|-105-[v0(200)]-10-[v1(30)]-10-[v2]-2-[v3(40)]", views: profileImageView,loginSegmentControl, loginContainerView, loginRegisterButton)
+        
+        heighConstraintLoginController = NSLayoutConstraint(item: loginContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 146)
+        view.addConstraint(heighConstraintLoginController!)
         
         setUpLoginContainerView()
     }
@@ -132,15 +142,13 @@ class LoginViewController: UIViewController {
         loginContainerView.addConstraintsWithFormat("H:|[v0]|", views: nameBorder)
         loginContainerView.addConstraintsWithFormat("H:|[v0]|", views: emailBorder)
         
-        loginContainerView.addConstraintsWithFormat("V:|[v0][v1(0.5)][v2][v3(0.5)][v4]|", views: nameTextField, nameBorder, emailTextField, emailBorder, passwordTextField)
+        loginContainerView.addConstraintsWithFormat("V:|[v0][v1(0.5)][v2(48)][v3][v4(48)]|", views: nameTextField, nameBorder, emailTextField, emailBorder, passwordTextField)
         
-        let heightConstriantName = NSLayoutConstraint(item: nameTextField, attribute: .Height, relatedBy: .Equal, toItem: loginContainerView, attribute: .Height, multiplier: 1/3, constant: loginContainerView.frame.size.height)
+        heightConstriantName = NSLayoutConstraint(item: nameTextField, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 48)
         
-        let heightConstriantEmail = NSLayoutConstraint(item: emailTextField, attribute: .Height, relatedBy: .Equal, toItem: loginContainerView, attribute: .Height, multiplier: 1/3, constant: loginContainerView.frame.size.height)
-        
-        loginContainerView.addConstraints([heightConstriantName, heightConstriantEmail])
+        loginContainerView.addConstraint(heightConstriantName!)
     }
-    
+        
 
 }
 

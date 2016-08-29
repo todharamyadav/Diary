@@ -2,16 +2,14 @@
 //  Album.swift
 //  Diary
 //
-//  Created by Dharamvir on 8/24/16.
+//  Created by Dharamvir on 8/29/16.
 //  Copyright © 2016 Dharamvir. All rights reserved.
 //
 
-import Foundation
-import CoreData
+import UIKit
 
-
-class Album: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
-
+class Album: NSObject {
+    var albumName: String?
+    var albumDate: NSNumber?
+    var userAlbum: String?
 }

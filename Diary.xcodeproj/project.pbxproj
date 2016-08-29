@@ -15,14 +15,15 @@
 		672350F41D6B5C9F009146D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 672350F31D6B5C9F009146D0 /* Assets.xcassets */; };
 		672350F71D6B5C9F009146D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 672350F51D6B5C9F009146D0 /* LaunchScreen.storyboard */; };
 		672350FF1D6BACDE009146D0 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350FE1D6BACDE009146D0 /* AddPostViewController.swift */; };
+		676002E91D7136D9003C4057 /* loginViewControllerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002E81D7136D9003C4057 /* loginViewControllerController.swift */; };
+		676002EB1D72EBA1003C4057 /* AlbumCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */; };
+		676002EE1D737D4F003C4057 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002ED1D737D4F003C4057 /* User.swift */; };
+		676002F11D738316003C4057 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002F01D738316003C4057 /* Extensions.swift */; };
+		676002F31D741FD7003C4057 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002F21D741FD7003C4057 /* Album.swift */; };
 		6770E5961D6BF25E00261D1F /* AddPostViewControllerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */; };
-		6770E5A11D6BFF5200261D1F /* Story+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */; };
-		6770E5A21D6BFF5200261D1F /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6770E5A01D6BFF5200261D1F /* Story.swift */; };
 		6790C3FE1D6D0BC100418C03 /* customTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */; };
 		6790C4001D6D0F6800418C03 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */; };
 		67DFFE021D6D64C4005BC857 /* AlbumCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DFFE011D6D64C4005BC857 /* AlbumCollectionViewController.swift */; };
-		67DFFE051D6D705A005BC857 /* Album+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DFFE031D6D705A005BC857 /* Album+CoreDataProperties.swift */; };
-		67DFFE061D6D705A005BC857 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DFFE041D6D705A005BC857 /* Album.swift */; };
 		6F76911EDC787200BC0EC63B /* Pods_Diary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF418E1A58B7A6059847D0E /* Pods_Diary.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,14 +39,15 @@
 		672350F61D6B5C9F009146D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		672350F81D6B5C9F009146D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		672350FE1D6BACDE009146D0 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
+		676002E81D7136D9003C4057 /* loginViewControllerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = loginViewControllerController.swift; sourceTree = "<group>"; };
+		676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumCustomCell.swift; sourceTree = "<group>"; };
+		676002ED1D737D4F003C4057 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		676002F01D738316003C4057 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		676002F21D741FD7003C4057 /* Album.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewControllerHandler.swift; sourceTree = "<group>"; };
-		6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Story+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		6770E5A01D6BFF5200261D1F /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = customTabBarController.swift; sourceTree = "<group>"; };
 		6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		67DFFE011D6D64C4005BC857 /* AlbumCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewController.swift; sourceTree = "<group>"; };
-		67DFFE031D6D705A005BC857 /* Album+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Album+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		67DFFE041D6D705A005BC857 /* Album.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		77889A9195A5D916C16B3E2D /* Pods-Diary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Diary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Diary/Pods-Diary.release.xcconfig"; sourceTree = "<group>"; };
 		DDF418E1A58B7A6059847D0E /* Pods_Diary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Diary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -71,6 +73,7 @@
 				6770E5951D6BF25E00261D1F /* AddPostViewControllerHandler.swift */,
 				6790C3FF1D6D0F6800418C03 /* SettingViewController.swift */,
 				671BCCFD1D6ECD4F001958CC /* LoginViewController.swift */,
+				676002E81D7136D9003C4057 /* loginViewControllerController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -96,20 +99,36 @@
 		672350E81D6B5C9F009146D0 /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				676002EF1D7382FB003C4057 /* Extensions */,
+				676002EC1D737D2A003C4057 /* Model */,
 				671BCCFC1D6ECD1A001958CC /* Controller */,
 				672350E91D6B5C9F009146D0 /* AppDelegate.swift */,
 				672350F31D6B5C9F009146D0 /* Assets.xcassets */,
 				672350F51D6B5C9F009146D0 /* LaunchScreen.storyboard */,
 				672350F81D6B5C9F009146D0 /* Info.plist */,
 				672350F01D6B5C9F009146D0 /* Diary.xcdatamodeld */,
-				67DFFE031D6D705A005BC857 /* Album+CoreDataProperties.swift */,
-				67DFFE041D6D705A005BC857 /* Album.swift */,
-				6770E59F1D6BFF5200261D1F /* Story+CoreDataProperties.swift */,
-				6770E5A01D6BFF5200261D1F /* Story.swift */,
 				6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */,
 				671BCCFF1D6EE237001958CC /* GoogleService-Info.plist */,
+				676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */,
 			);
 			path = Diary;
+			sourceTree = "<group>";
+		};
+		676002EC1D737D2A003C4057 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				676002ED1D737D4F003C4057 /* User.swift */,
+				676002F21D741FD7003C4057 /* Album.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		676002EF1D7382FB003C4057 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				676002F01D738316003C4057 /* Extensions.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 		A673EA986DE5C6913168B3B5 /* Frameworks */ = {
@@ -253,18 +272,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				67DFFE021D6D64C4005BC857 /* AlbumCollectionViewController.swift in Sources */,
+				676002F11D738316003C4057 /* Extensions.swift in Sources */,
 				672350FF1D6BACDE009146D0 /* AddPostViewController.swift in Sources */,
 				672350F21D6B5C9F009146D0 /* Diary.xcdatamodeld in Sources */,
-				67DFFE051D6D705A005BC857 /* Album+CoreDataProperties.swift in Sources */,
+				676002EE1D737D4F003C4057 /* User.swift in Sources */,
+				676002F31D741FD7003C4057 /* Album.swift in Sources */,
 				6790C3FE1D6D0BC100418C03 /* customTabBarController.swift in Sources */,
 				672350EC1D6B5C9F009146D0 /* FeedViewController.swift in Sources */,
-				6770E5A11D6BFF5200261D1F /* Story+CoreDataProperties.swift in Sources */,
+				676002EB1D72EBA1003C4057 /* AlbumCustomCell.swift in Sources */,
 				6790C4001D6D0F6800418C03 /* SettingViewController.swift in Sources */,
+				676002E91D7136D9003C4057 /* loginViewControllerController.swift in Sources */,
 				6770E5961D6BF25E00261D1F /* AddPostViewControllerHandler.swift in Sources */,
 				672350EA1D6B5C9F009146D0 /* AppDelegate.swift in Sources */,
-				6770E5A21D6BFF5200261D1F /* Story.swift in Sources */,
 				671BCCFE1D6ECD4F001958CC /* LoginViewController.swift in Sources */,
-				67DFFE061D6D705A005BC857 /* Album.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
