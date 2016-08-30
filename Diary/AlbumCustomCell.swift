@@ -7,19 +7,12 @@
 //
 
 import UIKit
+import Firebase
 
 class AlbumCustomCell: UICollectionViewCell {
     
-//    var album: Album? {
-//        didSet{
-//            albumLabel.text = album?.name
-//            
-//        }
-//    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         
         setUpViews()
     }

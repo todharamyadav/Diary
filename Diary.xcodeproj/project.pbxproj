@@ -99,6 +99,7 @@
 		672350E81D6B5C9F009146D0 /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				676002F41D7498F7003C4057 /* View */,
 				676002EF1D7382FB003C4057 /* Extensions */,
 				676002EC1D737D2A003C4057 /* Model */,
 				671BCCFC1D6ECD1A001958CC /* Controller */,
@@ -109,7 +110,6 @@
 				672350F01D6B5C9F009146D0 /* Diary.xcdatamodeld */,
 				6790C3FD1D6D0BC100418C03 /* customTabBarController.swift */,
 				671BCCFF1D6EE237001958CC /* GoogleService-Info.plist */,
-				676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */,
 			);
 			path = Diary;
 			sourceTree = "<group>";
@@ -129,6 +129,14 @@
 				676002F01D738316003C4057 /* Extensions.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		676002F41D7498F7003C4057 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 		A673EA986DE5C6913168B3B5 /* Frameworks */ = {

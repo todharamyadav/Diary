@@ -28,10 +28,36 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .Plain, target: self, action: #selector(handleLogOut))
         
         checkIfUserIsLoggedIn()
-        observeAlbums()
+        
         
     }
     var albums = [Album]()
+    
+    func observeUserAlbums(){
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+            return
+        }
+        let ref = FIRDatabase.database().reference().child("User-Album").child(uid)
+        ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
+            let albumID = snapshot.key
+            let albumRef = FIRDatabase.database().reference().child("Albums").child(albumID)
+            albumRef.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+                if let dictionary = snapshot.value as? [String: AnyObject]{
+                    let album = Album()
+                    album.setValuesForKeysWithDictionary(dictionary)
+                    self.albums.append(album)
+                    self.albums.sortInPlace({ (album1, album2) -> Bool in
+                        return album1.albumDate?.intValue > album2.albumDate?.intValue
+                    })
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.collectionView?.reloadData()
+                    })
+                }
+                }, withCancelBlock: nil)
+            }, withCancelBlock: nil)
+        
+    }
     
     func observeAlbums() {
         let ref = FIRDatabase.database().reference().child("Albums")
@@ -40,6 +66,9 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
                 let album = Album()
                 album.setValuesForKeysWithDictionary(dictionary)
                 self.albums.append(album)
+                self.albums.sortInPlace({ (album1, album2) -> Bool in
+                    return album1.albumDate?.intValue > album2.albumDate?.intValue
+                })
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     self.collectionView?.reloadData()
@@ -76,6 +105,10 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     func setUpNavBarWithUser(user: User) {
+        
+        albums.removeAll()
+        collectionView?.reloadData()
+        observeUserAlbums()
         
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
@@ -134,7 +167,19 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
             let childRef = ref.childByAutoId()
             let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum]
             
-            childRef.updateChildValues(values)
+            //childRef.updateChildValues(values)
+            childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                if error != nil{
+                    print(error)
+                    return
+                }
+                
+                let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
+                let albumID = childRef.key
+                userAlbumRef.updateChildValues([albumID: 1])
+            })
+            
+            
             
         }
         
