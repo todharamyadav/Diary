@@ -14,12 +14,14 @@ extension AddPostViewController {
     func saveData(){
         
         let timestamp: NSNumber = Int(NSDate().timeIntervalSince1970)
+        guard let albumID = album?.albumID else{
+            return
+        }
         
-        
-        let ref = FIRDatabase.database().reference().child("Albums")
+        let ref = FIRDatabase.database().reference().child("Stories")
         let childRef = ref.childByAutoId()
-        let albumID = childRef.key
-        let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum, "albumID": albumID]
+
+        let values = ["storyPost": postTextView.text!, "storyDate": timestamp]
         
         //childRef.updateChildValues(values)
         childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
@@ -28,9 +30,9 @@ extension AddPostViewController {
                 return
             }
             
-            let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
-            //let albumID = childRef.key
-            userAlbumRef.updateChildValues([albumID: 1])
+            let userAlbumRef = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
+            let storyID = childRef.key
+            userAlbumRef.updateChildValues([storyID: 1])
         })
     
         self.navigationController?.popViewControllerAnimated(true)
