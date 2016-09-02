@@ -71,7 +71,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
             let imageName = NSUUID().UUIDString
             let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
             
-            if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!){
+            if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
                 storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                     if error != nil{
                         print(error)

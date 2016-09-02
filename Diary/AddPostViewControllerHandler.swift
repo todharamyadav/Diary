@@ -1,45 +1,38 @@
-////
-////  AddPostViewControllerHandler.swift
-////  Diary
-////
-////  Created by Dharamvir on 8/22/16.
-////  Copyright © 2016 Dharamvir. All rights reserved.
-////
 //
-//import UIKit
-//import CoreData
+//  AddPostViewControllerHandler.swift
+//  Diary
 //
-//extension AddPostViewController {
-//    
-//    
-//    
-//    func saveData(){
-//        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
-//        if let context = delegate?.managedObjectContext{
-//            let newStory = NSEntityDescription.insertNewObjectForEntityForName("Story", inManagedObjectContext: context) as! Story
-//            
-//            if((postTextView.text) != nil){
-//                newStory.status = postTextView.text
-//            }
-//            
-//            if ((photoImageView.image) != nil) {
-//                newStory.locationImage = UIImagePNGRepresentation(photoImageView.image!)
-//            }
-//            
-//            if ((address) != nil){
-//                newStory.address = address
-//            }
-//            
-//            newStory.date = NSDate()
-//            newStory.album = self.album
-//            
-//            do{
-//                try context.save()
-//            } catch let err{
-//                print(err)
-//            }
-//        }
-//        
-//        self.navigationController?.popViewControllerAnimated(true)
-//    }
-//}
+//  Created by Dharamvir on 8/22/16.
+//  Copyright © 2016 Dharamvir. All rights reserved.
+//
+
+import UIKit
+import Firebase
+
+extension AddPostViewController {
+    
+    func saveData(){
+        
+        let timestamp: NSNumber = Int(NSDate().timeIntervalSince1970)
+        
+        
+        let ref = FIRDatabase.database().reference().child("Albums")
+        let childRef = ref.childByAutoId()
+        let albumID = childRef.key
+        let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum, "albumID": albumID]
+        
+        //childRef.updateChildValues(values)
+        childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+            if error != nil{
+                print(error)
+                return
+            }
+            
+            let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
+            //let albumID = childRef.key
+            userAlbumRef.updateChildValues([albumID: 1])
+        })
+    
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+}

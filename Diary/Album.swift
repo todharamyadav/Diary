@@ -9,6 +9,7 @@
 import UIKit
 
 class Album: NSObject {
+    var albumID: String?
     var albumName: String?
     var albumDate: NSNumber?
     var userAlbum: String?

@@ -13,6 +13,8 @@ import Firebase
 private let reuseIdentifier = "Cell"
 
 class AlbumCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    
+    var albums = [Album]()
 
     override func viewWillAppear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
@@ -31,7 +33,7 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         
         
     }
-    var albums = [Album]()
+    
     
     func observeUserAlbums(){
         guard let uid = FIRAuth.auth()?.currentUser?.uid else{
@@ -59,24 +61,24 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         
     }
     
-    func observeAlbums() {
-        let ref = FIRDatabase.database().reference().child("Albums")
-        ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
-            if let dictionary = snapshot.value as? [String: AnyObject]{
-                let album = Album()
-                album.setValuesForKeysWithDictionary(dictionary)
-                self.albums.append(album)
-                self.albums.sortInPlace({ (album1, album2) -> Bool in
-                    return album1.albumDate?.intValue > album2.albumDate?.intValue
-                })
-                
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.collectionView?.reloadData()
-                })
-            }
-            
-            }, withCancelBlock: nil)
-    }
+//    func observeAlbums() {
+//        let ref = FIRDatabase.database().reference().child("Albums")
+//        ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
+//            if let dictionary = snapshot.value as? [String: AnyObject]{
+//                let album = Album()
+//                album.setValuesForKeysWithDictionary(dictionary)
+//                self.albums.append(album)
+//                self.albums.sortInPlace({ (album1, album2) -> Bool in
+//                    return album1.albumDate?.intValue > album2.albumDate?.intValue
+//                })
+//                
+//                dispatch_async(dispatch_get_main_queue(), {
+//                    self.collectionView?.reloadData()
+//                })
+//            }
+//            
+//            }, withCancelBlock: nil)
+//    }
     
     func checkIfUserIsLoggedIn(){
         if FIRAuth.auth()?.currentUser?.uid == nil {
@@ -165,7 +167,8 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
             
             let ref = FIRDatabase.database().reference().child("Albums")
             let childRef = ref.childByAutoId()
-            let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum]
+            let albumID = childRef.key
+            let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum, "albumID": albumID]
             
             //childRef.updateChildValues(values)
             childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
@@ -175,7 +178,7 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
                 }
                 
                 let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
-                let albumID = childRef.key
+                //let albumID = childRef.key
                 userAlbumRef.updateChildValues([albumID: 1])
             })
             
@@ -205,13 +208,15 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         return cell
     }
     
-//    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        let layout = UICollectionViewFlowLayout()
-//        let controller = FeedViewController(collectionViewLayout: layout)
-//
-//        navigationController?.pushViewController(controller, animated: true)
-//    }
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let selectedAlbum = albums[indexPath.item]
+        
+        let layout = UICollectionViewFlowLayout()
+        let controller = FeedViewController(collectionViewLayout: layout)
+        controller.album = selectedAlbum
+        
+        navigationController?.pushViewController(controller, animated: true)
+    }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
