@@ -7,73 +7,144 @@
 //
 
 import UIKit
+import Firebase
 
-class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class SettingViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    let userDefault = NSUserDefaults.standardUserDefaults()
     var profileImage: UIImage?
+    var albumController: AlbumCollectionViewController?
     
-    let profileImageView: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "Mark")
-        image.contentMode = .ScaleAspectFit
-        image.userInteractionEnabled = true
-        //image.backgroundColor = UIColor.redColor()
-        return image
+    lazy var profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .ScaleAspectFill
+        imageView.image = UIImage(named: "Profile")
+        
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadProfilePhoto)))
+        imageView.userInteractionEnabled = true
+        
+        return imageView
     }()
     
-    let nameLabel: UILabel = {
+    lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Dharamvir Kumar Yadav"
         label.font = UIFont.systemFontOfSize(24)
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .Center
-        //label.backgroundColor = UIColor.blueColor()
+        label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(editName)))
+        label.userInteractionEnabled = true
         return label
     }()
+    
+    lazy var logOutButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Log Out", forState: .Normal)
+        button.backgroundColor = UIColor.redColor()
+        button.addTarget(self, action: #selector(handleLogOut), forControlEvents: .TouchUpInside)
+        return button
+    }()
+    
+    func handleLogOut(){
+        do{
+            try FIRAuth.auth()?.signOut()
+        }catch let logoutErr{
+            print(logoutErr)
+        }
+        
+        let loginController = LoginViewController()
+        loginController.settingController = self
+        presentViewController(loginController, animated: true, completion: nil)
+    }
+    
+//    override func viewWillAppear(animated: Bool) {
+//        checkIfUserIsLoggedIn()
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor(white: 0.95, alpha: 1)
         navigationItem.title = "Settings"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit Name", style: .Plain, target: self, action: #selector(editName))
         
         view.addSubview(profileImageView)
         view.addSubview(nameLabel)
+        view.addSubview(logOutButton)
         
-        view.addConstraintsWithFormat("H:|-60-[v0]-60-|", views: profileImageView)
-        view.addConstraintsWithFormat("H:|-10-[v0]-10-|", views: nameLabel)
+        view.addConstraintsWithFormat("H:[v0(200)]", views: profileImageView)
+        NSLayoutConstraint(item: profileImageView, attribute: .CenterX, relatedBy: .Equal, toItem: view, attribute: .CenterX, multiplier: 1, constant: 0).active = true
+        view.addConstraintsWithFormat("H:[v0]", views: nameLabel)
+        NSLayoutConstraint(item: nameLabel, attribute: .CenterX, relatedBy: .Equal, toItem: view, attribute: .CenterX, multiplier: 1, constant: 0).active = true
+        view.addConstraintsWithFormat("H:|-15-[v0]-15-|", views: logOutButton)
         
-        view.addConstraintsWithFormat("V:|-80-[v0(200)]-8-[v1]", views: profileImageView, nameLabel)
+        view.addConstraintsWithFormat("V:|-150-[v0(200)]-8-[v1(30)]", views: profileImageView, nameLabel)
+        view.addConstraintsWithFormat("V:[v0(40)]-80-|", views: logOutButton)
         
-        let tapp = UITapGestureRecognizer(target: self, action: #selector(profileImagePressed))
-        tapp.delegate = self
-        profileImageView.addGestureRecognizer(tapp)
-        
-        if let name = userDefault.objectForKey("NAME"){
-            nameLabel.text = name as? String
-        }
-        
-        if let profileImg = userDefault.objectForKey("PROFILEIMAGE"){
-            profileImageView.image = UIImage(data: profileImg as! NSData)
-        }
-        
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        checkIfUserIsLoggedIn()
     }
     
+    func checkIfUserIsLoggedIn(){
+        if FIRAuth.auth()?.currentUser?.uid == nil {
+            performSelector(#selector(handleLogOut), withObject: nil, afterDelay: 0)
+        } else{
+            setUpNavigationItemTitle()
+            
+        }
+    }
+    
+    func setUpNavigationItemTitle() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+            return
+        }
+        FIRDatabase.database().reference().child("users").child(uid).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                let user = User()
+                user.setValuesForKeysWithDictionary(dictionary)
+                self.setUpNavBarWithUser(user)
+            }
+            
+            
+            }, withCancelBlock: nil)
+    }
+    
+    func setUpNameLabel(name: String){
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(named: "Edit_Button")
+        attachment.bounds = CGRectMake(5, -5, 30, 30)
+        let attachmentString = NSAttributedString(attachment: attachment)
+        let myString = NSMutableAttributedString(string: name)
+        myString.appendAttributedString(attachmentString)
+        nameLabel.attributedText = myString
+    }
+    
+    func setUpNavBarWithUser(user: User) {
+        print("Whtas up")
+        
+        setUpNameLabel(user.name!)
+        
+        if let profileImageUrl = user.profileImageUrl{
+            profileImageView.loadImagWithCacheAndUrlString(profileImageUrl)
+        }
+        
+        albumController?.setUpNavigationItemTitle()
+    }
+
+    
     func editName() {
-        let alert = UIAlertController(title: "Name", message: "Enter Your Name", preferredStyle: .Alert)
+        let alert = UIAlertController(title: "Name", message: "Enter New Name", preferredStyle: .Alert)
         
         let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
             let textField = alert.textFields![0] as UITextField
             
-            self.nameLabel.text = textField.text
-            self.userDefault.setObject(textField.text, forKey: "NAME")
+            self.setUpNameLabel(textField.text!)
+            
+            guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+                return
+            }
+            let ref = FIRDatabase.database().reference().child("users").child(uid)
+            let values = ["name": textField.text!]
+            ref.updateChildValues(values)
         }
         
         let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
@@ -85,26 +156,71 @@ class SettingViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
         presentViewController(alert, animated: true, completion: nil)
     }
     
-    func profileImagePressed(){
+    func uploadProfilePhoto(){
         let imagePicker = UIImagePickerController()
-        //imagePicker.sourceType = .PhotoLibrary
         imagePicker.delegate = self
+        imagePicker.allowsEditing = true
         presentViewController(imagePicker, animated: true, completion: nil)
     }
     
-    //Mark: UIImagePickerControllerDelegate
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]){
-        profileImage = info[UIImagePickerControllerOriginalImage] as? UIImage
-        profileImageView.image = profileImage
-        dismissViewControllerAnimated(true) {
-            let profileImageData = UIImagePNGRepresentation(self.profileImage!)
-            self.userDefault.setObject(profileImageData, forKey: "PROFILEIMAGE")
-        }
-    }
+    //Mark: UIImakePickerDelegate
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController){
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        var selectedImageFromPicker: UIImage?
+        if let editedProfileImage = info["UIImagePickerControllerEditedImage"] as? UIImage{
+            selectedImageFromPicker = editedProfileImage
+        } else if let originalProfileImage = info["UIImagePickerControllerOriginalImage"] as? UIImage{
+            selectedImageFromPicker = originalProfileImage
+        }
+        
+        if let selectedimage = selectedImageFromPicker{
+            profileImageView.image = selectedimage
+            
+            guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+                return
+            }
+            let ref = FIRDatabase.database().reference().child("users").child(uid)
+            ref.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+                print(snapshot)
+                if let dictionary = snapshot.value as? [String: AnyObject]{
+                    let profileOldImageUrl = dictionary["profileImageUrl"] as? String
+                    print(profileOldImageUrl)
+                    let storageRef = FIRStorage.storage().referenceForURL(profileOldImageUrl!)
+                    storageRef.deleteWithCompletion({ (error) in
+                        if error != nil{
+                            print("Cannot be deleted")
+                            return
+                        }
+                        
+                        let imageName = NSUUID().UUIDString
+                        let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
+                        
+                        if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
+                            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
+                                if error != nil{
+                                    print(error)
+                                    return
+                                }
+                                if let profileImageUrl = metadata?.downloadURL()?.absoluteString{
+                                    
+                                    let values = ["profileImageUrl": profileImageUrl]
+                                    
+                                    ref.updateChildValues(values)
+                                }
+                                
+                            })
+                        }
+
+                    })
+                    
+                }
+                }, withCancelBlock: nil)
+        }
+        
         dismissViewControllerAnimated(true, completion: nil)
     }
-
-
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
 }

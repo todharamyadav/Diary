@@ -9,7 +9,9 @@
 import UIKit
 
 class customTabBarController: UITabBarController {
-
+    
+    //var albumPassController: AlbumCollectionViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -20,11 +22,14 @@ class customTabBarController: UITabBarController {
         navigationController.tabBarItem.image = UIImage(named: "Home")
         
         let settingController = SettingViewController()
+        settingController.albumController = albumController
         let secondNavigationController = UINavigationController(rootViewController: settingController)
         secondNavigationController.title = "Settings"
         secondNavigationController.tabBarItem.image = UIImage(named: "Setting")
         
         viewControllers = [navigationController, secondNavigationController]
+        
+        
     }
 
     override func didReceiveMemoryWarning() {

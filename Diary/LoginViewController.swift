@@ -13,6 +13,7 @@ class LoginViewController: UIViewController {
     
     var heightConstriantName: NSLayoutConstraint?
     var heighConstraintLoginController: NSLayoutConstraint?
+    var settingController: SettingViewController?
     var albumController: AlbumCollectionViewController?
     
     lazy var profileImageView: UIImageView = {

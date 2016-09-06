@@ -23,19 +23,18 @@ class AlbumCustomCell: UICollectionViewCell {
     
     let albumImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .ScaleAspectFit
+        imageView.contentMode = .ScaleToFill
         imageView.layer.borderColor = UIColor.greenColor().CGColor
-        imageView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 224/255, alpha: 1)
+        //imageView.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
         imageView.image = UIImage(named: "Default_Image")
         return imageView
     }()
     
     let albumLabel: UILabel = {
         let label = UILabel()
-        label.text = "Trip to Paris"
         label.font = UIFont.systemFontOfSize(18)
         label.textColor = UIColor.whiteColor()
-        label.backgroundColor = UIColor(red: 210/255, green: 105/255, blue: 30/255, alpha: 1)
+        label.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
         label.textAlignment = .Center
         return label
     }()

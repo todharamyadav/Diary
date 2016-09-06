@@ -43,9 +43,14 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         FIRAuth.auth()?.signInWithEmail(email, password: password, completion: { (user, error) in
             if error != nil{
                 print(error)
+                print("Please check your email address or password")
+                return
             }
             
             //successfully logged in
+            
+            
+            self.settingController?.setUpNavigationItemTitle()
             self.albumController?.setUpNavigationItemTitle()
             self.dismissViewControllerAnimated(true, completion: nil)
         })
@@ -101,8 +106,8 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
             
             let user = User()
             user.setValuesForKeysWithDictionary(values)
+            self.settingController?.setUpNavBarWithUser(user)
             self.albumController?.setUpNavBarWithUser(user)
-            
             self.dismissViewControllerAnimated(true, completion: nil)
             print("saved user successfully")
         })

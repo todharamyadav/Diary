@@ -7,21 +7,21 @@
 //
 
 import UIKit
-import CoreData
 import CoreLocation
 
-class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate {
+class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate, UITextViewDelegate {
     
     var album: Album?
-    //var profileimageUrl: String?
     var clLocationManager = CLLocationManager()
-    var address: String?
-    
+    var address: String? = ""
+    var placeholder = "Write something"
     
     let postTextView: UITextView = {
         let textView = UITextView()
         textView.font = UIFont.systemFontOfSize(16)
-        textView.text = "What are you doing"
+        textView.textContainerInset = UIEdgeInsetsMake(5, 5, 5, 5)
+        textView.layer.cornerRadius = 5
+        textView.layer.masksToBounds = true
         return textView
     }()
     
@@ -56,28 +56,35 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     var bottomConstraintImageContainer: NSLayoutConstraint?
     var bottomConstraintPostTextView: NSLayoutConstraint?
     
+    override func viewWillAppear(animated: Bool) {
+        if postTextView.text == ""{
+            postTextView.text = placeholder
+            postTextView.textColor = UIColor.lightGrayColor()
+        }else{
+            postTextView.textColor = UIColor.blackColor()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.whiteColor()
-        
-        let bottomBorderView = UIView()
-        bottomBorderView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        navigationItem.title = "New Story"
+        view.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
+        self.automaticallyAdjustsScrollViewInsets = false
+        postTextView.delegate = self
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(saveData))
         
         view.addSubview(postTextView)
         view.addSubview(photoImageView)
         view.addSubview(imageContainerView)
-        view.addSubview(bottomBorderView)
         
-        view.addConstraintsWithFormat("H:|[v0]|", views: postTextView)
-        view.addConstraintsWithFormat("V:|[v0(290)][v1(0.5)][v2]-50-|", views: postTextView, bottomBorderView, photoImageView)
+        view.addConstraintsWithFormat("H:|-8-[v0]-8-|", views: postTextView)
+        view.addConstraintsWithFormat("V:|-70-[v0(260)]-2-[v1]-50-|", views: postTextView, photoImageView)
 
         
-        view.addConstraintsWithFormat("H:|[v0]|", views: photoImageView)
+        view.addConstraintsWithFormat("H:|-8-[v0]-8-|", views: photoImageView)
         
         view.addConstraintsWithFormat("H:|[v0]|", views: imageContainerView)
-        view.addConstraintsWithFormat("H:|[v0]|", views: bottomBorderView)
         
         view.addConstraintsWithFormat("V:[v0(50)]", views: imageContainerView)
         bottomConstraintImageContainer = NSLayoutConstraint(item: imageContainerView, attribute: .Bottom, relatedBy: .Equal, toItem: view, attribute: .Bottom, multiplier: 1, constant: 0)
@@ -100,6 +107,25 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
         uiImagePicker.allowsEditing = true
         uiImagePicker.delegate = self
         presentViewController(uiImagePicker, animated: true, completion: nil)
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        postTextView.resignFirstResponder()
+    }
+    
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        textView.textColor = UIColor.blackColor()
+        if (textView.text == placeholder){
+            textView.text = ""
+        }
+        return true
+    }
+    
+    func textViewDidEndEditing(textView: UITextView) {
+        if(textView.text == "") {
+            textView.text = placeholder
+            textView.textColor = UIColor.lightGrayColor()
+        }
     }
     
     func setUpImageContainerView(){
@@ -135,8 +161,6 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
         }
         
     }
-    
-    
     
     //Mark: UIImagePickerDelegate
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]){
@@ -177,7 +201,6 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
             }
             if let myPlacement = myPlacements?[0]{
                 self.address = "\(myPlacement.locality!), \(myPlacement.administrativeArea!)"
-                //print(self.address)
                 
             }
         }
@@ -196,8 +219,6 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
             break
         }
     }
-
-
 }
 
 

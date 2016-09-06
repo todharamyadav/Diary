@@ -7,17 +7,17 @@
 //
 
 import UIKit
-//import CoreData
 import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class AlbumCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class AlbumCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITabBarControllerDelegate {
     
     var albums = [Album]()
 
     override func viewWillAppear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
+        //checkIfUserIsLoggedIn()
     }
 
     override func viewDidLoad() {
@@ -26,12 +26,8 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         collectionView?.alwaysBounceVertical = true
         self.collectionView!.registerClass(AlbumCustomCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.backgroundColor = UIColor.whiteColor()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(addAlbum))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .Plain, target: self, action: #selector(handleLogOut))
         
         checkIfUserIsLoggedIn()
-        
-        
     }
     
     
@@ -58,27 +54,7 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
                 }
                 }, withCancelBlock: nil)
             }, withCancelBlock: nil)
-        
     }
-    
-//    func observeAlbums() {
-//        let ref = FIRDatabase.database().reference().child("Albums")
-//        ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
-//            if let dictionary = snapshot.value as? [String: AnyObject]{
-//                let album = Album()
-//                album.setValuesForKeysWithDictionary(dictionary)
-//                self.albums.append(album)
-//                self.albums.sortInPlace({ (album1, album2) -> Bool in
-//                    return album1.albumDate?.intValue > album2.albumDate?.intValue
-//                })
-//                
-//                dispatch_async(dispatch_get_main_queue(), {
-//                    self.collectionView?.reloadData()
-//                })
-//            }
-//            
-//            }, withCancelBlock: nil)
-//    }
     
     func checkIfUserIsLoggedIn(){
         if FIRAuth.auth()?.currentUser?.uid == nil {
@@ -108,13 +84,14 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
     
     func setUpNavBarWithUser(user: User) {
         
+        print("Counting....")
+        
         albums.removeAll()
         collectionView?.reloadData()
         observeUserAlbums()
         
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        //titleView.backgroundColor = UIColor.redColor()
         
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -128,7 +105,8 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         }
         
         let nameLabel = UILabel()
-        nameLabel.text = user.name
+        nameLabel.textColor = UIColor.whiteColor()
+        nameLabel.text = "Albums"//user.name
         
         titleView.addSubview(containerView)
         containerView.addSubview(profileImageView)
@@ -178,12 +156,8 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
                 }
                 
                 let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
-                //let albumID = childRef.key
                 userAlbumRef.updateChildValues([albumID: 1])
             })
-            
-            
-            
         }
         
         let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
@@ -196,26 +170,39 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return albums.count
+        return albums.count + 1
     }
-
+    
+    
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! AlbumCustomCell
         
-        let album = albums[indexPath.item]
-        cell.albumLabel.text = album.albumName
-    
+        if indexPath.item == albums.count{
+            cell.albumImageView.image = UIImage(named: "New_Album")
+            cell.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
+            cell.albumLabel.text = "Add New Album"
+        }else{
+            let album = albums[indexPath.item]
+            cell.backgroundColor = UIColor.whiteColor()
+            cell.albumLabel.text = album.albumName
+            cell.albumImageView.image = UIImage(named: "Default_Image")
+        }
         return cell
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let selectedAlbum = albums[indexPath.item]
         
-        let layout = UICollectionViewFlowLayout()
-        let controller = FeedViewController(collectionViewLayout: layout)
-        controller.album = selectedAlbum
-        
-        navigationController?.pushViewController(controller, animated: true)
+        if indexPath.item == albums.count{
+            addAlbum()
+        }else{
+            let selectedAlbum = albums[indexPath.item]
+            let layout = UICollectionViewFlowLayout()
+            let controller = FeedViewController(collectionViewLayout: layout)
+            controller.album = selectedAlbum
+            
+            navigationController?.pushViewController(controller, animated: true)
+        }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
