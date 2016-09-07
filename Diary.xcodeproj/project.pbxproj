@@ -16,6 +16,7 @@
 		672350F71D6B5C9F009146D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 672350F51D6B5C9F009146D0 /* LaunchScreen.storyboard */; };
 		672350FF1D6BACDE009146D0 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350FE1D6BACDE009146D0 /* AddPostViewController.swift */; };
 		6736D2881D7D9DB7000A5E04 /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6736D2871D7D9DB7000A5E04 /* StoryViewController.swift */; };
+		6736D2901D80AE69000A5E04 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 6736D28F1D80AE69000A5E04 /* Reachability.m */; };
 		676002E91D7136D9003C4057 /* loginViewControllerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002E81D7136D9003C4057 /* loginViewControllerController.swift */; };
 		676002EB1D72EBA1003C4057 /* AlbumCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */; };
 		676002EE1D737D4F003C4057 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676002ED1D737D4F003C4057 /* User.swift */; };
@@ -43,6 +44,9 @@
 		672350F81D6B5C9F009146D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		672350FE1D6BACDE009146D0 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		6736D2871D7D9DB7000A5E04 /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
+		6736D28D1D80AE69000A5E04 /* Diary-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Diary-Bridging-Header.h"; sourceTree = "<group>"; };
+		6736D28E1D80AE69000A5E04 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		6736D28F1D80AE69000A5E04 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		676002E81D7136D9003C4057 /* loginViewControllerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = loginViewControllerController.swift; sourceTree = "<group>"; };
 		676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumCustomCell.swift; sourceTree = "<group>"; };
 		676002ED1D737D4F003C4057 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -144,6 +148,9 @@
 			children = (
 				676002EA1D72EBA1003C4057 /* AlbumCustomCell.swift */,
 				67AC347F1D7B34F2003F8DC8 /* FeedCustomeCell.swift */,
+				6736D28E1D80AE69000A5E04 /* Reachability.h */,
+				6736D28F1D80AE69000A5E04 /* Reachability.m */,
+				6736D28D1D80AE69000A5E04 /* Diary-Bridging-Header.h */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -304,6 +311,7 @@
 				672350EA1D6B5C9F009146D0 /* AppDelegate.swift in Sources */,
 				671BCCFE1D6ECD4F001958CC /* LoginViewController.swift in Sources */,
 				67D40C1B1D7A461F00265B2F /* Story.swift in Sources */,
+				6736D2901D80AE69000A5E04 /* Reachability.m in Sources */,
 				6736D2881D7D9DB7000A5E04 /* StoryViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,10 +418,13 @@
 			baseConfigurationReference = 4C42B6EFF8B80329C2432D8D /* Pods-Diary.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Diary/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.Diary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Diary/Diary-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -422,10 +433,12 @@
 			baseConfigurationReference = 77889A9195A5D916C16B3E2D /* Pods-Diary.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Diary/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.Diary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Diary/Diary-Bridging-Header.h";
 			};
 			name = Release;
 		};

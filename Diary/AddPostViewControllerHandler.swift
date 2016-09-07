@@ -39,23 +39,28 @@ extension AddPostViewController {
             return
         }
         
-        let ref = FIRDatabase.database().reference().child("Stories")
-        let childRef = ref.childByAutoId()
-        
-        let values = ["storyPost": postTextView.text, "storyDate": timestamp, "storyImage": profileImageUrl, "storyLocation": address!]
-        
-        //childRef.updateChildValues(values)
-        childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
-            if error != nil{
-                print(error)
-                return
-            }
+        if postTextView.text == placeholder{
+            self.alertError()
+        }else{
+            let ref = FIRDatabase.database().reference().child("Stories")
+            let childRef = ref.childByAutoId()
             
-            let userAlbumRef = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
-            let storyID = childRef.key
-            userAlbumRef.updateChildValues([storyID: 1])
-        })
-        
-        self.navigationController?.popViewControllerAnimated(true)
+            let values = ["storyPost": postTextView.text, "storyDate": timestamp, "storyImage": profileImageUrl, "storyLocation": address!]
+            
+            //childRef.updateChildValues(values)
+            childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                if error != nil{
+                    print(error)
+                    return
+                }
+                
+                let userAlbumRef = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
+                let storyID = childRef.key
+                userAlbumRef.updateChildValues([storyID: 1])
+            })
+            
+            self.navigationController?.popViewControllerAnimated(true)
+
+        }
     }
 }

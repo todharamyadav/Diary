@@ -137,14 +137,18 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
         let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
             let textField = alert.textFields![0] as UITextField
             
-            self.setUpNameLabel(textField.text!)
-            
-            guard let uid = FIRAuth.auth()?.currentUser?.uid else{
-                return
+            if (textField.text!.isEmpty){
+                self.alertError()
+            }else{
+                self.setUpNameLabel(textField.text!)
+                
+                guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+                    return
+                }
+                let ref = FIRDatabase.database().reference().child("users").child(uid)
+                let values = ["name": textField.text!]
+                ref.updateChildValues(values)
             }
-            let ref = FIRDatabase.database().reference().child("users").child(uid)
-            let values = ["name": textField.text!]
-            ref.updateChildValues(values)
         }
         
         let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)

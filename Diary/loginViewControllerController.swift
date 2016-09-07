@@ -31,7 +31,6 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         } else {
             handleRegister()
         }
-        
     }
     
     func handleLogin() {
@@ -43,7 +42,8 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         FIRAuth.auth()?.signInWithEmail(email, password: password, completion: { (user, error) in
             if error != nil{
                 print(error)
-                print("Please check your email address or password")
+                self.alertError()
+                //print("Please check your email address or password")
                 return
             }
             
@@ -62,37 +62,43 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
             return
         }
         
-        FIRAuth.auth()?.createUserWithEmail(email, password: password, completion: { (user: FIRUser?, error) in
-            if error != nil{
-                print(error)
-                return
-            }
-            
-            guard let uid = user?.uid else{
-                return
-            }
-            
-            //successfully authenticated user
-            let imageName = NSUUID().UUIDString
-            let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
-            
-            if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
-                storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
-                    if error != nil{
-                        print(error)
-                        return
-                    }
-                    if let profileImageUrl = metadata?.downloadURL()?.absoluteString{
+        if nameTextField.text!.isEmpty {
+            self.alertError()
+        }else{
+            FIRAuth.auth()?.createUserWithEmail(email, password: password, completion: { (user: FIRUser?, error) in
+                if error != nil{
+                    print(error)
+                    self.alertError()
+                    return
+                }
+                
+                guard let uid = user?.uid else{
+                    return
+                }
+                
+                //successfully authenticated user
+                let imageName = NSUUID().UUIDString
+                let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
+                
+                if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
+                    storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
+                        if error != nil{
+                            print(error)
+                            return
+                        }
+                        if let profileImageUrl = metadata?.downloadURL()?.absoluteString{
+                            
+                            let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
+                            
+                            self.registerUserIntoDatabase(uid, values: values)
+                        }
                         
-                        let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
-                        
-                        self.registerUserIntoDatabase(uid, values: values)
-                    }
-                    
-                })
-            }
-            
-        })
+                    })
+                }
+                
+            })
+
+        }
     }
     
     private func registerUserIntoDatabase(uid: String, values: [String: AnyObject]) {
@@ -101,6 +107,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
             if err != nil{
                 print(err)
+                self.alertError()
                 return
             }
             

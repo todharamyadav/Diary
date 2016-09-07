@@ -20,6 +20,7 @@ class LoginViewController: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .ScaleAspectFill
         imageView.image = UIImage(named: "Profile")
+        imageView.hidden = true
         
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadProfilePhoto)))
         imageView.userInteractionEnabled = true
@@ -30,7 +31,7 @@ class LoginViewController: UIViewController {
     lazy var loginSegmentControl: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Login","Register"])
         sc.tintColor = UIColor.whiteColor()
-        sc.selectedSegmentIndex = 1
+        sc.selectedSegmentIndex = 0
         sc.addTarget(self, action: #selector(handleLoginSegmentControl), forControlEvents: .ValueChanged)
         return sc
     }()
@@ -47,7 +48,6 @@ class LoginViewController: UIViewController {
     let nameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Name"
-        //tf.backgroundColor = UIColor.redColor()
         return tf
     }()
     
@@ -60,7 +60,6 @@ class LoginViewController: UIViewController {
     let emailTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Email"
-        //tf.backgroundColor = UIColor.blueColor()
         return tf
     }()
     
@@ -87,22 +86,14 @@ class LoginViewController: UIViewController {
         button.addTarget(self, action: #selector(handleLoginRegister), forControlEvents: .TouchUpInside)
         return button
     }()
-    
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(red: 97/255, green: 183/255, blue: 127/255, alpha: 1)
-
         setUpLoginView()
+        
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
@@ -114,7 +105,6 @@ class LoginViewController: UIViewController {
         view.addSubview(profileImageView)
         view.addSubview(loginSegmentControl)
         
-        
         view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginContainerView)
         view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginRegisterButton)
         view.addConstraintsWithFormat("H:|-100-[v0(200)]", views: profileImageView)
@@ -124,7 +114,7 @@ class LoginViewController: UIViewController {
         
         view.addConstraintsWithFormat("V:|-105-[v0(200)]-10-[v1(30)]-10-[v2]-2-[v3(40)]", views: profileImageView,loginSegmentControl, loginContainerView, loginRegisterButton)
         
-        heighConstraintLoginController = NSLayoutConstraint(item: loginContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 146)
+        heighConstraintLoginController = NSLayoutConstraint(item: loginContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 98)
         view.addConstraint(heighConstraintLoginController!)
         
         setUpLoginContainerView()
@@ -145,7 +135,7 @@ class LoginViewController: UIViewController {
         
         loginContainerView.addConstraintsWithFormat("V:|[v0][v1(0.5)][v2(48)][v3][v4(48)]|", views: nameTextField, nameBorder, emailTextField, emailBorder, passwordTextField)
         
-        heightConstriantName = NSLayoutConstraint(item: nameTextField, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 48)
+        heightConstriantName = NSLayoutConstraint(item: nameTextField, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0)
         
         loginContainerView.addConstraint(heightConstriantName!)
     }
