@@ -127,36 +127,37 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
 
     
     func editName() {
-        let alert = UIAlertController(title: "Name", message: "Enter New Name", preferredStyle: .Alert)
         
+        let alertController = UIAlertController(title: "Album Name", message: "New Album Name", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
         
-        let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
-            let textField = alert.textFields![0] as UITextField
-            
-            if (textField.text!.isEmpty){
-                self.alertError("Error", message: "Name field can't be empty")
-            }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
-                self.alertError("Error", message: "Could not be saved because of internet error or something else")
-            }
-            else{
-                self.setUpNameLabel(textField.text!)
-                
-                guard let uid = FIRAuth.auth()?.currentUser?.uid else{
-                    return
+        alertController.addAction(UIAlertAction(title: "Save", style: .Default, handler: { (action) in
+            if let textField = alertController.textFields?.first {
+                if (textField.text!.isEmpty){
+                    self.alertError("Error", message: "Name field can't be empty")
+                }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
+                    self.alertError("Error", message: "Could not be saved because of internet error or something else")
                 }
-                let ref = FIRDatabase.database().reference().child("users").child(uid)
-                let values = ["name": textField.text!]
-                ref.updateChildValues(values)
+                else{
+                    self.setUpNameLabel(textField.text!)
+                    
+                    guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+                        return
+                    }
+                    let ref = FIRDatabase.database().reference().child("users").child(uid)
+                    let values = ["name": textField.text!]
+                    ref.updateChildValues(values)
+                }
+
             }
-        }
+            
+        }))
         
-        let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        alertController.addTextFieldWithConfigurationHandler({ (textfield) in
+            textfield.placeholder = "Album Name"
+        })
         
-        alert.addTextFieldWithConfigurationHandler(nil)
-        alert.addAction(saveButton)
-        alert.addAction(cancelButton)
-        
-        presentViewController(alert, animated: true, completion: nil)
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
     func uploadProfilePhoto(){

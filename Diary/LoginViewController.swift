@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var heightConstriantName: NSLayoutConstraint?
     var heighConstraintLoginController: NSLayoutConstraint?
@@ -45,9 +45,10 @@ class LoginViewController: UIViewController {
         return view
     }()
     
-    let nameTextField: UITextField = {
+    lazy var nameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Name"
+        tf.delegate = self
         return tf
     }()
     
@@ -57,9 +58,11 @@ class LoginViewController: UIViewController {
         return view
     }()
     
-    let emailTextField: UITextField = {
+    lazy var emailTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Email"
+        tf.keyboardType = .EmailAddress
+        tf.delegate = self
         return tf
     }()
     
@@ -69,10 +72,11 @@ class LoginViewController: UIViewController {
         return view
     }()
     
-    let passwordTextField: UITextField = {
+    lazy var passwordTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Password"
         tf.secureTextEntry = true
+        tf.delegate = self
         //tf.backgroundColor = UIColor.cyanColor()
         return tf
     }()
@@ -114,9 +118,9 @@ class LoginViewController: UIViewController {
         
         view.addConstraintsWithFormat("H:|-12-[v0]-12-|", views: loginRegisterButton)
         
-        view.addConstraintsWithFormat("V:|-105-[v0(200)]-10-[v1(30)]-10-[v2]-2-[v3(40)]", views: profileImageView,loginSegmentControl, loginContainerView, loginRegisterButton)
+        view.addConstraintsWithFormat("V:|-40-[v0(200)]-5-[v1(30)]-5-[v2]-2-[v3(40)]", views: profileImageView,loginSegmentControl, loginContainerView, loginRegisterButton)
         
-        heighConstraintLoginController = NSLayoutConstraint(item: loginContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 98)
+        heighConstraintLoginController = NSLayoutConstraint(item: loginContainerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 81)
         view.addConstraint(heighConstraintLoginController!)
         
         setUpLoginContainerView()
@@ -135,7 +139,7 @@ class LoginViewController: UIViewController {
         loginContainerView.addConstraintsWithFormat("H:|[v0]|", views: nameBorder)
         loginContainerView.addConstraintsWithFormat("H:|[v0]|", views: emailBorder)
         
-        loginContainerView.addConstraintsWithFormat("V:|[v0][v1(0.5)][v2(48)][v3][v4(48)]|", views: nameTextField, nameBorder, emailTextField, emailBorder, passwordTextField)
+        loginContainerView.addConstraintsWithFormat("V:|[v0][v1(0.5)][v2(40)][v3][v4(40)]|", views: nameTextField, nameBorder, emailTextField, emailBorder, passwordTextField)
         
         heightConstriantName = NSLayoutConstraint(item: nameTextField, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0)
         

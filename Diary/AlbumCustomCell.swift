@@ -56,7 +56,7 @@ class AlbumCustomCell: UICollectionViewCell {
         addConstraintsWithFormat("H:|[v0]|", views: albumLabel)
         addConstraintsWithFormat("H:[v0(40)]|", views: deleteButton)
         
-        addConstraintsWithFormat("V:|[v0(165)][v1]|", views: albumImageView, albumLabel)
+        addConstraintsWithFormat("V:|[v0][v1(30)]|", views: albumImageView, albumLabel)
         addConstraintsWithFormat("V:|[v0(40)]", views: deleteButton)
     }
 }

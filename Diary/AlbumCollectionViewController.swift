@@ -147,44 +147,45 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     func addAlbum(){
-        let alert = UIAlertController(title: "Album", message: "Enter New Album Name", preferredStyle: .Alert)
         
-        let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
-            
-            let albumNameTextField = alert.textFields![0] as UITextField
-            
-            if (albumNameTextField.text!.isEmpty){
-                self.alertError("Error", message: "Please enter Album Name")
-            }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
-                self.alertError("Error", message: "Could not be saved because of internet error or something else")
-            }else{
-                let timestamp: NSNumber = Int(NSDate().timeIntervalSince1970)
-                let userAlbum = FIRAuth.auth()!.currentUser!.uid
-                
-                let ref = FIRDatabase.database().reference().child("Albums")
-                let childRef = ref.childByAutoId()
-                let albumID = childRef.key
-                let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum, "albumID": albumID]
-                
-                childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
-                    if error != nil{
-                        print(error)
-                        return
-                    }
+        let alertController = UIAlertController(title: "Album Name", message: "New Album Name", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        
+        alertController.addAction(UIAlertAction(title: "Save", style: .Default, handler: { (action) in
+            if let albumNameTextField = alertController.textFields?.first {
+                if (albumNameTextField.text!.isEmpty){
+                    self.alertError("Error", message: "Please enter Album Name")
+                }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
+                    self.alertError("Error", message: "Could not be saved because of internet error or something else")
+                }else{
+                    let timestamp: NSNumber = Int(NSDate().timeIntervalSince1970)
+                    let userAlbum = FIRAuth.auth()!.currentUser!.uid
                     
-                    let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
-                    userAlbumRef.updateChildValues([albumID: 1])
-                })
+                    let ref = FIRDatabase.database().reference().child("Albums")
+                    let childRef = ref.childByAutoId()
+                    let albumID = childRef.key
+                    let values = ["albumName": albumNameTextField.text!, "albumDate": timestamp, "userAlbum": userAlbum, "albumID": albumID]
+                    
+                    childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                        if error != nil{
+                            print(error)
+                            return
+                        }
+                        
+                        let userAlbumRef = FIRDatabase.database().reference().child("User-Album").child(userAlbum)
+                        userAlbumRef.updateChildValues([albumID: 1])
+                    })
+                }
             }
-        }
+            
+        }))
         
-        let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        alertController.addTextFieldWithConfigurationHandler({ (textfield) in
+            textfield.placeholder = "Album Name"
+        })
         
-        alert.addTextFieldWithConfigurationHandler(nil)
-        alert.addAction(saveButton)
-        alert.addAction(cancelButton)
+        presentViewController(alertController, animated: true, completion: nil)
         
-        presentViewController(alert, animated: true, completion: nil)
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -197,22 +198,19 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         
         if indexPath.item == albums.count{
             cell.albumImageView.image = UIImage(named: "New_Album")
-            cell.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
+            cell.albumLabel.backgroundColor = UIColor.whiteColor()
             cell.albumLabel.text = "Add New Album"
             cell.deleteButton.hidden = true
         }else{
             let album = albums[indexPath.item]
-            cell.backgroundColor = UIColor.whiteColor()
+            cell.albumLabel.backgroundColor = UIColor(red: 26/255, green: 175/255, blue: 226/255, alpha: 1)
             setUpNameLabel(album.albumName!, label: cell.albumLabel)
-            //cell.albumLabel.text = album.albumName
             cell.albumImageView.image = UIImage(named: "Default_Image")
             
             cell.deleteButton.layer.setValue(indexPath.item, forKey: "index")
             cell.deleteButton.addTarget(self, action: #selector(deleteUser(_:)), forControlEvents: UIControlEvents.TouchUpInside)
             cell.deleteButton.hidden = false
             
-            
-            //print(cell.albumLabel.layer.valueForKey("labelKey"))
             cell.albumLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(editAlbumName(_:))))
             cell.albumLabel.tag = indexPath.item
             cell.albumLabel.userInteractionEnabled = true
@@ -225,36 +223,35 @@ class AlbumCollectionViewController: UICollectionViewController, UICollectionVie
         if let i = tapRecognizer.view?.tag{
             let albumNum = albums[i]
             
-            let alert = UIAlertController(title: "Name", message: "Enter New Album Name", preferredStyle: .Alert)
+            let alertController = UIAlertController(title: "Album Name", message: "Changed Album Name", preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
             
-            let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
-                let textField = alert.textFields![0] as UITextField
-                
-                if (textField.text!.isEmpty){
-                    self.alertError("Error", message: "Name field can't be empty")
-                }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
-                    self.alertError("Error", message: "Could not be saved because of internet error or something else")
+            alertController.addAction(UIAlertAction(title: "Save", style: .Default, handler: { (action) in
+                if let textField = alertController.textFields?.first {
+                    if (textField.text!.isEmpty){
+                        self.alertError("Error", message: "Name field can't be empty")
+                    }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
+                        self.alertError("Error", message: "Could not be saved because of internet error or something else")
+                    }
+                    else{
+                        let indexPath = NSIndexPath(forItem: i, inSection: 0)
+                        let cell = self.collectionView?.cellForItemAtIndexPath(indexPath) as! AlbumCustomCell
+                        
+                        self.setUpNameLabel(textField.text!, label: cell.albumLabel)
+                        
+                        let ref = FIRDatabase.database().reference().child("Albums").child(albumNum.albumID!)
+                        let values = ["albumName": textField.text!]
+                        ref.updateChildValues(values)
+                    }
                 }
-                else{
-                    let indexPath = NSIndexPath(forItem: i, inSection: 0)
-                    let cell = self.collectionView?.cellForItemAtIndexPath(indexPath) as! AlbumCustomCell
-                    
-                    self.setUpNameLabel(textField.text!, label: cell.albumLabel)
-                    
-                    let ref = FIRDatabase.database().reference().child("Albums").child(albumNum.albumID!)
-                    let values = ["albumName": textField.text!]
-                    ref.updateChildValues(values)
-                }
-            }
+
+            }))
             
-            let cancelButton = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+            alertController.addTextFieldWithConfigurationHandler({ (textfield) in
+                textfield.placeholder = "Album Name"
+            })
             
-            alert.addTextFieldWithConfigurationHandler(nil)
-            alert.addAction(saveButton)
-            alert.addAction(cancelButton)
-            
-            presentViewController(alert, animated: true, completion: nil)
-            
+            presentViewController(alertController, animated: true, completion: nil)
         }
     }
     

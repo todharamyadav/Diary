@@ -12,16 +12,23 @@ import Firebase
 extension LoginViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: Actions
-    
+
     func handleLoginSegmentControl(){
         let buttonTitle = loginSegmentControl.titleForSegmentAtIndex(loginSegmentControl.selectedSegmentIndex)
         loginRegisterButton.setTitle(buttonTitle, forState: .Normal)
-        
-        heighConstraintLoginController?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 98 : 146
-        heightConstriantName?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 0 : 48
+        heighConstraintLoginController?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 81 : 121
+        heightConstriantName?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 0 : 40
         
         profileImageView.hidden = loginSegmentControl.selectedSegmentIndex == 0 ? true : false
+        emailTextField.text = ""
+        passwordTextField.text = ""
+        nameTextField.text = ""
         
+        if loginSegmentControl.selectedSegmentIndex == 0{
+            emailTextField.becomeFirstResponder()
+        }else{
+            nameTextField.becomeFirstResponder()
+        }
     }
     
     func handleLoginRegister(){
@@ -162,6 +169,11 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+    //UITextFieldDelegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool{
+        textField.resignFirstResponder()
+        return true
+    }
     
 }
 
