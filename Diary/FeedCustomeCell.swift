@@ -22,7 +22,7 @@ class FeedCell: UICollectionViewCell{
                 ref.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
                     if let dictionary = snapshot.value as? [String: AnyObject]{
                         
-                        attributedText = NSMutableAttributedString(string: "\(dictionary["name"] as? String)", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(14)])
+                        attributedText = NSMutableAttributedString(string: "\(dictionary["name"] as! String)", attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(14)])
                         
                         if let seconds = self.story?.storyDate?.doubleValue{
                             let timeStampDate = NSDate(timeIntervalSince1970: seconds)
@@ -33,8 +33,9 @@ class FeedCell: UICollectionViewCell{
                             
                         }
                         
-                        attributedText.appendAttributedString(NSAttributedString(string: "\n\(self.story?.storyLocation)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
-                        
+                        if let storyLocation = self.story?.storyLocation{
+                            attributedText.appendAttributedString(NSAttributedString(string: "\n\(storyLocation)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(12),NSForegroundColorAttributeName: UIColor.lightGrayColor()]))
+                        }
                         
                         if let profileImageUrl = dictionary["profileImageUrl"] as? String{
                             self.profileImageview.loadImagWithCacheAndUrlString(profileImageUrl)

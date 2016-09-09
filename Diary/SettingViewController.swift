@@ -13,6 +13,7 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var profileImage: UIImage?
     var albumController: AlbumCollectionViewController?
+    let reachability = Reachability.reachabilityForInternetConnection()
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -27,7 +28,6 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Dharamvir Kumar Yadav"
         label.font = UIFont.systemFontOfSize(24)
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .Center
@@ -55,10 +55,6 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
         loginController.settingController = self
         presentViewController(loginController, animated: true, completion: nil)
     }
-    
-//    override func viewWillAppear(animated: Bool) {
-//        checkIfUserIsLoggedIn()
-//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,7 +115,6 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setUpNavBarWithUser(user: User) {
-        print("Whtas up")
         
         setUpNameLabel(user.name!)
         
@@ -134,12 +129,16 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     func editName() {
         let alert = UIAlertController(title: "Name", message: "Enter New Name", preferredStyle: .Alert)
         
+        
         let saveButton = UIAlertAction(title: "Save", style: .Default) { (action) in
             let textField = alert.textFields![0] as UITextField
             
             if (textField.text!.isEmpty){
-                self.alertError()
-            }else{
+                self.alertError("Error", message: "Name field can't be empty")
+            }else if (self.reachability.currentReachabilityStatus().rawValue == 0){
+                self.alertError("Error", message: "Could not be saved because of internet error or something else")
+            }
+            else{
                 self.setUpNameLabel(textField.text!)
                 
                 guard let uid = FIRAuth.auth()?.currentUser?.uid else{
@@ -161,10 +160,26 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func uploadProfilePhoto(){
+        
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
-        presentViewController(imagePicker, animated: true, completion: nil)
+        
+        let alertController = UIAlertController(title: "Select Source for Image", message: nil, preferredStyle: .ActionSheet)
+        alertController.addAction(UIAlertAction(title: "Gallery", style: .Default) { (action) in
+            imagePicker.sourceType = .PhotoLibrary
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+            })
+        alertController.addAction(UIAlertAction(title: "Camera", style: .Default, handler: { (action) in
+            imagePicker.sourceType = .Camera
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action) in
+            
+        }))
+        
+        presentViewController(alertController, animated: true, completion: nil)
+
     }
     
     //Mark: UIImakePickerDelegate
@@ -176,52 +191,56 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else if let originalProfileImage = info["UIImagePickerControllerOriginalImage"] as? UIImage{
             selectedImageFromPicker = originalProfileImage
         }
-        
-        if let selectedimage = selectedImageFromPicker{
-            profileImageView.image = selectedimage
-            
-            guard let uid = FIRAuth.auth()?.currentUser?.uid else{
-                return
-            }
-            let ref = FIRDatabase.database().reference().child("users").child(uid)
-            ref.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
-                print(snapshot)
-                if let dictionary = snapshot.value as? [String: AnyObject]{
-                    let profileOldImageUrl = dictionary["profileImageUrl"] as? String
-                    print(profileOldImageUrl)
-                    let storageRef = FIRStorage.storage().referenceForURL(profileOldImageUrl!)
-                    storageRef.deleteWithCompletion({ (error) in
-                        if error != nil{
-                            print("Cannot be deleted")
-                            return
-                        }
-                        
-                        let imageName = NSUUID().UUIDString
-                        let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
-                        
-                        if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
-                            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
-                                if error != nil{
-                                    print(error)
-                                    return
-                                }
-                                if let profileImageUrl = metadata?.downloadURL()?.absoluteString{
-                                    
-                                    let values = ["profileImageUrl": profileImageUrl]
-                                    
-                                    ref.updateChildValues(values)
-                                }
-                                
-                            })
-                        }
-
-                    })
-                    
-                }
-                }, withCancelBlock: nil)
-        }
-        
         dismissViewControllerAnimated(true, completion: nil)
+        
+        if (self.reachability.currentReachabilityStatus().rawValue == 0){
+            self.alertError("Error", message: "Could not be saved because of internet error or something else")
+        }else{
+            if let selectedimage = selectedImageFromPicker{
+                profileImageView.image = selectedimage
+                
+                guard let uid = FIRAuth.auth()?.currentUser?.uid else{
+                    return
+                }
+                let ref = FIRDatabase.database().reference().child("users").child(uid)
+                ref.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+                    print(snapshot)
+                    if let dictionary = snapshot.value as? [String: AnyObject]{
+                        let profileOldImageUrl = dictionary["profileImageUrl"] as? String
+                        print(profileOldImageUrl)
+                        let storageRef = FIRStorage.storage().referenceForURL(profileOldImageUrl!)
+                        storageRef.deleteWithCompletion({ (error) in
+                            if error != nil{
+                                print("Cannot be deleted")
+                                return
+                            }
+                            
+                            let imageName = NSUUID().UUIDString
+                            let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
+                            
+                            if let uploadData = UIImageJPEGRepresentation(self.profileImageView.image!, 0.1){
+                                storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
+                                    if error != nil{
+                                        print(error)
+                                        return
+                                    }
+                                    if let profileImageUrl = metadata?.downloadURL()?.absoluteString{
+                                        
+                                        let values = ["profileImageUrl": profileImageUrl]
+                                        
+                                        ref.updateChildValues(values)
+                                    }
+                                    
+                                })
+                            }
+                            
+                        })
+                        
+                    }
+                    }, withCancelBlock: nil)
+            }
+        }
+
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {

@@ -52,9 +52,9 @@ extension UIView {
 }
 
 extension UIViewController{
-    func alertError() {
+    func alertError(title: String, message: String) {
         
-        let alertController = UIAlertController(title: "Error", message: "Something Went Wrong", preferredStyle: .Alert)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
         alertController.addAction(OKAction)
         self.presentViewController(alertController, animated: true, completion: nil)

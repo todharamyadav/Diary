@@ -9,6 +9,7 @@
 import UIKit
 
 class Story: NSObject {
+    var storyID: String?
     var storyPost: String?
     var storyDate: NSNumber?
     var storyImage: String?

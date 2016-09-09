@@ -102,11 +102,26 @@ class AddPostViewController: UIViewController, UIGestureRecognizerDelegate, UIIm
     }
     
     func imageContainerPressed(){
-        let uiImagePicker = UIImagePickerController()
-        uiImagePicker.sourceType = .PhotoLibrary
-        uiImagePicker.allowsEditing = true
-        uiImagePicker.delegate = self
-        presentViewController(uiImagePicker, animated: true, completion: nil)
+        
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        
+        let alertController = UIAlertController(title: "Select Source for Image", message: nil, preferredStyle: .ActionSheet)
+        alertController.addAction(UIAlertAction(title: "Gallery", style: .Default) { (action) in
+            imagePicker.sourceType = .PhotoLibrary
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+            })
+        alertController.addAction(UIAlertAction(title: "Camera", style: .Default, handler: { (action) in
+            imagePicker.sourceType = .Camera
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action) in
+            
+        }))
+        
+        presentViewController(alertController, animated: true, completion: nil)
+
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class StoryViewController: UITableViewController {
     
@@ -19,9 +20,12 @@ class StoryViewController: UITableViewController {
             }
         }
     }
+    var album: Album?
     
     var storyCell: UITableViewCell = UITableViewCell()
     var imageCell: UITableViewCell = UITableViewCell()
+    var emptyCell: UITableViewCell = UITableViewCell()
+    var shareCell: UITableViewCell = UITableViewCell()
     
     let storyLabel: UILabel = {
         let label = UILabel()
@@ -37,8 +41,17 @@ class StoryViewController: UITableViewController {
         let image = UIImageView()
         image.contentMode = .ScaleToFill
         image.layer.masksToBounds = true
-        //image.image = UIImage(named: "Default_Image")
         return image
+    }()
+    
+    lazy var shareButton: UIButton = {
+        let button = UIButton()
+        let titleColor = UIColor.whiteColor()
+        button.setTitle("Share", forState: .Normal)
+        button.setTitleColor(titleColor, forState: .Normal)
+        button.backgroundColor = UIColor(red: 97/255, green: 183/255, blue: 127/255, alpha: 1)
+        button.addTarget(self, action: #selector(shareStory), forControlEvents: .TouchUpInside)
+        return button
     }()
     
     override func loadView() {
@@ -48,6 +61,7 @@ class StoryViewController: UITableViewController {
         
         storyCell.addSubview(storyLabel)
         imageCell.addSubview(storyImageView)
+        shareCell.addSubview(shareButton)
         
         storyCell.addConstraintsWithFormat("H:|-8-[v0]-8-|", views: storyLabel)
         storyCell.addConstraintsWithFormat("V:|-8-[v0]-8-|", views: storyLabel)
@@ -55,7 +69,10 @@ class StoryViewController: UITableViewController {
         imageCell.addConstraintsWithFormat("H:|-8-[v0]-8-|", views: storyImageView)
         imageCell.addConstraintsWithFormat("V:|-8-[v0]|", views: storyImageView)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share", style: .Plain, target: self, action: #selector(shareStory))
+        shareCell.addConstraintsWithFormat("H:|-8-[v0]-8-|", views: shareButton)
+        shareCell.addConstraintsWithFormat("V:|[v0]|", views: shareButton)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Delete", style: .Plain, target: self, action: #selector(deleteStory))
         
     }
     
@@ -72,8 +89,30 @@ class StoryViewController: UITableViewController {
 
     }
     
+    func deleteStory(){
+        
+        let deleteStoryController = UIAlertController(title: "Deleting Story", message: "Are you sure you want to delete this Event", preferredStyle: .ActionSheet)
+        
+        deleteStoryController.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { (action) in
+            print("Delete Pressed")
+            if let albumID = self.album?.albumID{
+                if let storyID = self.story?.storyID{
+                    let ref = FIRDatabase.database().reference().child("Album-Stories").child(albumID).child(storyID)
+                    ref.removeValue()
+                }
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+            }))
+        
+        deleteStoryController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action) in
+            print("Cancel Pressed")
+        }))
+        self.presentViewController(deleteStoryController, animated: true, completion: nil)
+
+    }
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 4
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -82,6 +121,10 @@ class StoryViewController: UITableViewController {
             return self.storyCell
         case 1:
             return self.imageCell
+        case 2:
+            return self.emptyCell
+        case 3:
+            return self.shareCell
         default:
             fatalError("Some Error")
         }
@@ -98,6 +141,10 @@ class StoryViewController: UITableViewController {
             return 0
         case 1:
             return 400
+        case 2:
+            return 20
+        case 3:
+            return 40
         default:
             fatalError("Some Error")
         }

@@ -22,11 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.makeKeyAndVisible()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.checkForReachability(_:)), name: kReachabilityChangedNotification, object: nil)
+        window?.rootViewController = customTabBarController()
+        
+        self.reachability = Reachability.reachabilityForInternetConnection()
+        
+        self.reachability.startNotifier()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.checkForReachability(_:)), name:kReachabilityChangedNotification, object: nil)
         self.reachability = Reachability.reachabilityForInternetConnection()
         self.reachability.startNotifier()
         
-        window?.rootViewController = customTabBarController()
         
         UINavigationBar.appearance().barTintColor = UIColor(red: 97/255, green: 183/255, blue: 127/255, alpha: 1)
         UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]

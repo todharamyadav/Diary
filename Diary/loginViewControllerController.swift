@@ -20,7 +20,6 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         heighConstraintLoginController?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 98 : 146
         heightConstriantName?.constant = loginSegmentControl.selectedSegmentIndex == 0 ? 0 : 48
         
-        
         profileImageView.hidden = loginSegmentControl.selectedSegmentIndex == 0 ? true : false
         
     }
@@ -42,7 +41,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         FIRAuth.auth()?.signInWithEmail(email, password: password, completion: { (user, error) in
             if error != nil{
                 print(error)
-                self.alertError()
+                self.alertError("Error", message: "Username or Password incorrect or Internet connection lost")
                 //print("Please check your email address or password")
                 return
             }
@@ -63,12 +62,12 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         }
         
         if nameTextField.text!.isEmpty {
-            self.alertError()
+            self.alertError("Error", message: "Name is Required")
         }else{
             FIRAuth.auth()?.createUserWithEmail(email, password: password, completion: { (user: FIRUser?, error) in
                 if error != nil{
                     print(error)
-                    self.alertError()
+                    self.alertError("Error", message: "Format of Email or Password incorrect or Internet connection lost")
                     return
                 }
                 
@@ -107,7 +106,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
             if err != nil{
                 print(err)
-                self.alertError()
+                self.alertError("Error", message: "Something went wrong")
                 return
             }
             
@@ -124,7 +123,22 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
-        presentViewController(imagePicker, animated: true, completion: nil)
+        
+        let alertController = UIAlertController(title: "Select Source for Image", message: nil, preferredStyle: .ActionSheet)
+        alertController.addAction(UIAlertAction(title: "Gallery", style: .Default) { (action) in
+            imagePicker.sourceType = .PhotoLibrary
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+        })
+        alertController.addAction(UIAlertAction(title: "Camera", style: .Default, handler: { (action) in
+            imagePicker.sourceType = .Camera
+            self.presentViewController(imagePicker, animated: true, completion: nil)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action) in
+            
+        }))
+        
+        presentViewController(alertController, animated: true, completion: nil)
+        
     }
     
     //Mark: UIImakePickerDelegate

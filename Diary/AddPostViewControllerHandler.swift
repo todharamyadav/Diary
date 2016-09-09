@@ -12,24 +12,31 @@ import Firebase
 extension AddPostViewController {
     
     func saveData(){
-        var profileImageUrl: String?
         
-        let imageName = NSUUID().UUIDString
-        let storageRef = FIRStorage.storage().reference().child("Post_Images").child("\(imageName).png")
-        
-        if let locImage = photoImageView.image{
-            let uploadData = UIImageJPEGRepresentation(locImage, 0.1)
-            storageRef.putData(uploadData!, metadata: nil, completion: { (metadata, error) in
-                if error != nil{
-                    print(error)
-                    return
-                }
-                profileImageUrl = metadata?.downloadURL()?.absoluteString
-                self.saveStoryToDatabase(profileImageUrl!)
-                })
+        let reachability = Reachability.reachabilityForInternetConnection()
+        if reachability.currentReachabilityStatus().rawValue == 0{
+            self.alertError("Error", message: "Could not be saved because of internet error or something else")
+            
         }else{
-            profileImageUrl = ""
-            saveStoryToDatabase(profileImageUrl!)
+            var profileImageUrl: String?
+            
+            let imageName = NSUUID().UUIDString
+            let storageRef = FIRStorage.storage().reference().child("Post_Images").child("\(imageName).png")
+            
+            if let locImage = photoImageView.image{
+                let uploadData = UIImageJPEGRepresentation(locImage, 0.1)
+                storageRef.putData(uploadData!, metadata: nil, completion: { (metadata, error) in
+                    if error != nil{
+                        print(error)
+                        return
+                    }
+                    profileImageUrl = metadata?.downloadURL()?.absoluteString
+                    self.saveStoryToDatabase(profileImageUrl!)
+                })
+            }else{
+                profileImageUrl = ""
+                saveStoryToDatabase(profileImageUrl!)
+            }
         }
     }
     
@@ -40,24 +47,14 @@ extension AddPostViewController {
         }
         
         if postTextView.text == placeholder{
-            self.alertError()
+            self.alertError("Error", message: "Please enter a description of the Event")
         }else{
-            let ref = FIRDatabase.database().reference().child("Stories")
-            let childRef = ref.childByAutoId()
+            let ref = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
+            let storyRef = ref.childByAutoId()
+            let storyID = storyRef.key
+            let values = ["storyID": storyID, "storyPost": postTextView.text, "storyDate": timestamp, "storyImage": profileImageUrl, "storyLocation": address!]
             
-            let values = ["storyPost": postTextView.text, "storyDate": timestamp, "storyImage": profileImageUrl, "storyLocation": address!]
-            
-            //childRef.updateChildValues(values)
-            childRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
-                if error != nil{
-                    print(error)
-                    return
-                }
-                
-                let userAlbumRef = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
-                let storyID = childRef.key
-                userAlbumRef.updateChildValues([storyID: 1])
-            })
+            storyRef.updateChildValues(values)
             
             self.navigationController?.popViewControllerAnimated(true)
 

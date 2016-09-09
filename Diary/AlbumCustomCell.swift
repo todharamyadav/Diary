@@ -30,7 +30,7 @@ class AlbumCustomCell: UICollectionViewCell {
         return imageView
     }()
     
-    let albumLabel: UILabel = {
+    lazy var albumLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFontOfSize(18)
         label.textColor = UIColor.whiteColor()
@@ -39,13 +39,24 @@ class AlbumCustomCell: UICollectionViewCell {
         return label
     }()
     
+        
+    let deleteButton: UIButton = {
+        let button = UIButton()
+        let image = UIImage(named: "Delete_Button")
+        button.setImage(image, forState: .Normal)
+        return button
+    }()
+    
     func setUpViews(){
         addSubview(albumImageView)
         addSubview(albumLabel)
+        addSubview(deleteButton)
         
         addConstraintsWithFormat("H:|[v0]|", views: albumImageView)
         addConstraintsWithFormat("H:|[v0]|", views: albumLabel)
+        addConstraintsWithFormat("H:[v0(40)]|", views: deleteButton)
         
         addConstraintsWithFormat("V:|[v0(165)][v1]|", views: albumImageView, albumLabel)
+        addConstraintsWithFormat("V:|[v0(40)]", views: deleteButton)
     }
 }

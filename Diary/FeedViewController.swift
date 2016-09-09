@@ -20,6 +20,7 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
             stories.removeAll()
             collectionView?.reloadData()
             observeAlbumStories()
+            observerDeletion()
         }
     }
     var stories = [Story]()
@@ -49,7 +50,7 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         let ref = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
         ref.observeEventType(.ChildAdded, withBlock: { (snapshot) in
             let storyID = snapshot.key
-            let storyRef = FIRDatabase.database().reference().child("Stories").child(storyID)
+            let storyRef = ref.child(storyID)
             storyRef.observeSingleEventOfType(.Value, withBlock: { (snapshot) in
                 if let dictionary = snapshot.value as? [String: AnyObject]{
                     let story = Story()
@@ -65,6 +66,34 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
                 })
                 
                 }, withCancelBlock: nil)
+            }, withCancelBlock: nil)
+        
+    }
+    
+    func indexOfStory(snapshot: FIRDataSnapshot) -> Int {
+        var index = 0
+        for  story in stories {
+            
+            if (snapshot.key == story.storyID) {
+                return index
+            }
+            index += 1
+        }
+        return -1
+    }
+    
+    func observerDeletion(){
+        guard let albumID = album?.albumID else{
+            return
+        }
+        
+        let ref = FIRDatabase.database().reference().child("Album-Stories").child(albumID)
+        ref.observeEventType(.ChildRemoved, withBlock: { (snapshot) in
+            let index = self.indexOfStory(snapshot)
+            self.stories.removeAtIndex(index)
+            dispatch_async(dispatch_get_main_queue(),{
+                self.collectionView?.reloadData()
+            })
             }, withCancelBlock: nil)
         
     }
@@ -92,6 +121,7 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         let selectedStory = stories[indexPath.item]
         let controller = StoryViewController()
         controller.story = selectedStory
+        controller.album = self.album
         navigationController?.pushViewController(controller, animated: true)
     }
     
