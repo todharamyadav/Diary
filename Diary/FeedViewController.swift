@@ -8,10 +8,11 @@
 
 import UIKit
 import Firebase
+import iAd
 
 let cellID = "cellID"
 
-class FeedViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class FeedViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ADBannerViewDelegate {
     
     var album: Album?{
         didSet{
@@ -24,6 +25,14 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         }
     }
     var stories = [Story]()
+    
+    
+    lazy var adView: ADBannerView = {
+        let view = ADBannerView()
+        view.delegate = self
+        view.hidden = true
+        return view
+    }()
     
     override func viewWillAppear(animated: Bool) {
         tabBarController?.tabBar.hidden = true
@@ -38,6 +47,11 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         collectionView?.alwaysBounceVertical = true
         
         collectionView?.registerClass(FeedCell.self, forCellWithReuseIdentifier: cellID)
+        
+        self.canDisplayBannerAds = true
+        view?.addSubview(adView)
+        view?.addConstraintsWithFormat("H:|[v0]|", views: adView)
+        view?.addConstraintsWithFormat("V:[v0(60)]|", views: adView)
       
     }
     
@@ -147,6 +161,14 @@ class FeedViewController: UICollectionViewController, UICollectionViewDelegateFl
         }
         
     }
+    
+    //Mark: ADBannerViewDelegate
+    func bannerViewDidLoadAd(banner: ADBannerView!) {
+        adView.hidden = false
+        
+    }
+    
+    
 }
 
 

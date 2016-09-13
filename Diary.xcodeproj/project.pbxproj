@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		671066E01D84E88E00A18DA3 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 671066DF1D84E88E00A18DA3 /* iAd.framework */; };
 		671BCCFE1D6ECD4F001958CC /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671BCCFD1D6ECD4F001958CC /* LoginViewController.swift */; };
 		671BCD001D6EE237001958CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 671BCCFF1D6EE237001958CC /* GoogleService-Info.plist */; };
 		672350EA1D6B5C9F009146D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672350E91D6B5C9F009146D0 /* AppDelegate.swift */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		4C42B6EFF8B80329C2432D8D /* Pods-Diary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Diary.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Diary/Pods-Diary.debug.xcconfig"; sourceTree = "<group>"; };
+		671066DF1D84E88E00A18DA3 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		671BCCFD1D6ECD4F001958CC /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		671BCCFF1D6EE237001958CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		672350E61D6B5C9F009146D0 /* Diary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Diary.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				671066E01D84E88E00A18DA3 /* iAd.framework in Frameworks */,
 				6F76911EDC787200BC0EC63B /* Pods_Diary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -158,6 +161,7 @@
 		A673EA986DE5C6913168B3B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				671066DF1D84E88E00A18DA3 /* iAd.framework */,
 				DDF418E1A58B7A6059847D0E /* Pods_Diary.framework */,
 			);
 			name = Frameworks;
@@ -207,7 +211,7 @@
 				TargetAttributes = {
 					672350E51D6B5C9F009146D0 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = KRKLF7GG63;
+						DevelopmentTeam = YTABQD33G5;
 					};
 				};
 			};
@@ -419,11 +423,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Charles Kinder (EW4YN56HZY)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Charles Kinder (EW4YN56HZY)";
 				INFOPLIST_FILE = Diary/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.Diary;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.WriteDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Diary/Diary-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -436,11 +443,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Charles Kinder (YTABQD33G5)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Charles Kinder (YTABQD33G5)";
 				INFOPLIST_FILE = Diary/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.Diary;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dharamvir.WriteDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Diary/Diary-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

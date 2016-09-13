@@ -47,19 +47,27 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         
         FIRAuth.auth()?.signInWithEmail(email, password: password, completion: { (user, error) in
             if error != nil{
-                print(error)
-                self.alertError("Error", message: "Username or Password incorrect or Internet connection lost")
-                //print("Please check your email address or password")
+                if (!self.isValidEmail(email)){
+                    self.alertError("Error", message: "Email format is not correct")
+                }else{
+                    self.alertError("Error", message: "Username or Password incorrect or Internet connection lost")
+                }
+                
                 return
             }
             
             //successfully logged in
-            
-            
+            self.dismissViewControllerAnimated(true, completion: nil)
             self.settingController?.setUpNavigationItemTitle()
             self.albumController?.setUpNavigationItemTitle()
-            self.dismissViewControllerAnimated(true, completion: nil)
         })
+    }
+    
+    func isValidEmail(testStr: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        let result = emailTest.evaluateWithObject(testStr)
+        return result
     }
     
     func handleRegister(){
@@ -70,19 +78,24 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         
         if nameTextField.text!.isEmpty {
             self.alertError("Error", message: "Name is Required")
-        }else{
+        }else if(!isValidEmail(email)){
+            self.alertError("Error", message: "Email format is not correct")
+        }else if(password.characters.count < 6){
+            self.alertError("Error", message: "Password cannot have less than 6 characters")
+        }
+        else{
+            
             FIRAuth.auth()?.createUserWithEmail(email, password: password, completion: { (user: FIRUser?, error) in
                 if error != nil{
-                    print(error)
-                    self.alertError("Error", message: "Format of Email or Password incorrect or Internet connection lost")
+                    self.alertError("Error", message: "Email alreay exist or Check your internet connection")
                     return
                 }
-                
                 guard let uid = user?.uid else{
                     return
                 }
                 
                 //successfully authenticated user
+                self.dismissViewControllerAnimated(true, completion: nil)
                 let imageName = NSUUID().UUIDString
                 let storageRef = FIRStorage.storage().reference().child("Profile_Images").child("\(imageName).png")
                 
@@ -121,7 +134,6 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
             user.setValuesForKeysWithDictionary(values)
             self.settingController?.setUpNavBarWithUser(user)
             self.albumController?.setUpNavBarWithUser(user)
-            self.dismissViewControllerAnimated(true, completion: nil)
             print("saved user successfully")
         })
     }
